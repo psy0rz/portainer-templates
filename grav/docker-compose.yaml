@@ -1,0 +1,56 @@
+---
+version: "2.1"
+services:
+  grav:
+    
+    # hostname: grav_datux.docker1
+    image: lscr.io/linuxserver/grav:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Amsterdam
+      # werkt nog niet door php.ini etc
+      # - GRAV_ENVIRONMENT=production
+      # - S6_KEEP_ENV=1
+    volumes:
+      - config:/config
+    # ports:
+    #   - 80:80
+    restart: unless-stopped
+
+    labels:
+      - traefik.enable=true
+      
+      #http
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-http.entrypoints=web
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-http.rule=Host(${TRAEFIK_HOSTS})
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-http.middlewares=${COMPOSE_PROJECT_NAME}-redir
+      - traefik.http.middlewares.${COMPOSE_PROJECT_NAME}-redir.redirectscheme.scheme=https
+
+      #https
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.entrypoints=websecure
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.rule=Host(${TRAEFIK_HOSTS})
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls.certresolver=myzerossl 
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls=true
+
+
+    networks:
+      - proxynet
+      - default
+
+  smtp:
+    # hostname: smtp.grav_datux.docker1
+    image: mwader/postfix-relay
+    environment: 
+      - POSTFIX_myhostname=${POSTFIX_HOSTNAME}
+
+    restart: unless-stopped
+
+networks:
+  proxynet:
+    name: proxynet
+
+
+volumes:
+  config:
+    driver: zfs

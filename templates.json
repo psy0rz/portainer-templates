@@ -1,0 +1,22 @@
+{
+    "version": "2",
+    "templates": [
+        {
+            "type": 3,
+            "title": "Grav CMS",
+            "description": "Grav CMS behind traefik.",
+            "platform": "linux",
+            "repository": {
+                "url": "https://github.com/psy0rz/portainer-templates",
+                "stackfile": "grav/docker-compose.yaml"
+            },
+            "env": [
+                {
+                    "name": "TRAEFIK_HOSTS",
+                    "description": "Traefik hostnames (comma separated, quoted with `backticks`)",
+                    "label": "Traefik hostnames"
+                }
+            ]
+        }
+    ]
+}
