@@ -1,3 +1,5 @@
+# Vanilla wordpress 
+
 version: '3.1'
 services:
   wordpress:
