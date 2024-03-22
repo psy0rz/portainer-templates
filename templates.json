@@ -8,7 +8,7 @@
             "platform": "linux",
             "repository": {
                 "url": "https://github.com/psy0rz/portainer-templates",
-                "stackfile": "grav/docker-compose.yaml"
+                "stackfile": "grav/docker-compose.yml"
             },
             "env": [
                 {
@@ -31,7 +31,7 @@
             "platform": "linux",
             "repository": {
                 "url": "https://github.com/psy0rz/portainer-templates",
-                "stackfile": "wordpress/docker-compose.yaml"
+                "stackfile": "wordpress/docker-compose.yml"
             },
             "env": [
                 {
