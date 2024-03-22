@@ -18,12 +18,6 @@ services:
     labels:
       - traefik.enable=true
       
-      #http
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-http.entrypoints=web
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-http.rule=Host(${TRAEFIK_HOSTS})
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-http.middlewares=${COMPOSE_PROJECT_NAME}-redir
-      - traefik.http.middlewares.${COMPOSE_PROJECT_NAME}-redir.redirectscheme.scheme=https
-
       #https
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.entrypoints=websecure
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.rule=Host(${TRAEFIK_HOSTS})

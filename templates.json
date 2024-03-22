@@ -4,6 +4,29 @@
         {
             "type": 3,
             "title": "Grav CMS",
+            "description": "Grav CMS + treafik",
+            "platform": "linux",
+            "repository": {
+                "url": "https://github.com/psy0rz/portainer-templates",
+                "stackfile": "grav/docker-compose.yaml"
+            },
+            "env": [
+                {
+                    "name": "TRAEFIK_HOSTS",
+                    "description": "Traefik hostnames (comma separated, quoted with `backticks`)",
+                    "label": "Traefik hostnames"
+                },
+                {
+                    "name": "POSTFIX_HOSTNAME",
+                    "description": "Important to not get into spam boxes.",
+                    "label": "Postfix hostname",
+                    "default": "example.somedomain"
+                }
+            ]
+        },
+        {
+            "type": 3,
+            "title": "Wordpress + traefik",
             "description": "Grav CMS behind traefik.",
             "platform": "linux",
             "repository": {
