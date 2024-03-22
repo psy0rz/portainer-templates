@@ -1,11 +1,9 @@
-# Vanilla wordpress 
+# Wordpress Openlitespeed
 
 version: '3.1'
 services:
   wordpress:
-    
-
-    image: wordpress
+    image: litespeedtech/openlitespeed:${OLS_VERSION}-${PHP_VERSION}
 
     restart: unless-stopped
 
@@ -26,7 +24,7 @@ services:
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls=true
 
     volumes:
-      - wordpress:/var/www/html
+      - wordpress:/var/www/html/localhost
     networks:
       - proxynet
       - default
