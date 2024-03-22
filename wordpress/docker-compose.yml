@@ -1,0 +1,63 @@
+version: '3.1'
+services:
+  wordpress:
+    
+
+    image: wordpress
+
+    restart: unless-stopped
+
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_TABLE_PREFIX: wp_
+
+    labels:
+      - traefik.enable=true
+      
+      #https
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.entrypoints=websecure
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.rule=Host(${TRAEFIK_HOSTS})
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls.certresolver=myzerossl 
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls=true
+
+    volumes:
+      - wordpress:/var/www/html
+    networks:
+      - proxynet
+      - default
+
+  db:
+    image: mysql:8.2
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - db:/var/lib/mysql
+
+  smtp:
+    image: mwader/postfix-relay
+    environment: 
+      - POSTFIX_myhostname=${POSTFIX_HOSTNAME}
+
+    restart: unless-stopped
+
+  redis:
+    image: redis:alpine
+    restart: always
+    
+
+networks:
+  proxynet:
+    name: proxynet
+
+volumes:
+  wordpress:
+    driver: zfs
+  db:
+    driver: zfs

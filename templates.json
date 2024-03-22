@@ -4,7 +4,7 @@
         {
             "type": 3,
             "title": "Grav CMS",
-            "description": "Grav CMS + treafik",
+            "description": "Grav CMS",
             "platform": "linux",
             "repository": {
                 "url": "https://github.com/psy0rz/portainer-templates",
@@ -26,12 +26,12 @@
         },
         {
             "type": 3,
-            "title": "Wordpress + traefik",
-            "description": "Grav CMS behind traefik.",
+            "title": "Wordpress vanilla",
+            "description": "Default official wordpress image",
             "platform": "linux",
             "repository": {
                 "url": "https://github.com/psy0rz/portainer-templates",
-                "stackfile": "grav/docker-compose.yaml"
+                "stackfile": "wordpress/docker-compose.yaml"
             },
             "env": [
                 {
