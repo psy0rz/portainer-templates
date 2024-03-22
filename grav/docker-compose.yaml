@@ -3,7 +3,6 @@ version: "2.1"
 services:
   grav:
     
-    # hostname: grav_datux.docker1
     image: lscr.io/linuxserver/grav:latest
     environment:
       - PUID=1000
@@ -14,8 +13,6 @@ services:
       # - S6_KEEP_ENV=1
     volumes:
       - config:/config
-    # ports:
-    #   - 80:80
     restart: unless-stopped
 
     labels:
@@ -39,7 +36,6 @@ services:
       - default
 
   smtp:
-    # hostname: smtp.grav_datux.docker1
     image: mwader/postfix-relay
     environment: 
       - POSTFIX_myhostname=${POSTFIX_HOSTNAME}

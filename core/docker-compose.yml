@@ -1,0 +1,93 @@
+# Core environment to use the other templates with.
+# Its a treafik + portainer + watchdog stack.
+# Use on Alpinbox with ZFS docker volume support.
+
+
+version: "3.3"
+
+services:
+  traefik:
+    image: "traefik:latest"
+    restart: always
+
+    command:
+      - "--log.level=INFO"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--providers.docker.network=proxynet"
+      - "--providers.docker.defaultRule="
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myzerossl.acme.email=${ZEROSSL_EMAIL}"
+      - "--certificatesresolvers.myzerossl.acme.storage=/storage/acme.json"
+      - "--certificatesresolvers.myzerossl.acme.caserver=${ZEROSSL_CASERVER}"
+      - "--certificatesresolvers.myzerossl.acme.eab.kid=${ZEROSSL_KID}" 
+      - "--certificatesresolvers.myzerossl.acme.eab.hmacEncoded=${ZEROSSL_HMAC}"
+      - "--certificatesresolvers.myzerossl.acme.httpChallenge.entryPoint=web"
+
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+
+    volumes:
+     - "/var/run/docker.sock:/var/run/docker.sock:ro"
+     - traefik:/storage
+
+    networks:
+      - proxynet
+      - default
+
+    labels:
+      # Traefik status page
+      - "traefik.enable=true"
+
+      - "traefik.http.routers.dashboard.rule=Host(`${DOMAIN}`) && ( PathPrefix(`/traefik`) || HeadersRegexp(`Referer`, `/traefik`) )"
+      - "traefik.http.routers.dashboard.priority=999"
+      - "traefik.http.routers.dashboard.middlewares=strip-traefik"
+      - "traefik.http.middlewares.strip-traefik.stripprefix.prefixes=/traefik"
+
+      - "traefik.http.routers.dashboard.entrypoints=websecure"
+      - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
+      - "traefik.http.routers.dashboard.service=dashboard"
+      - "traefik.http.routers.dashboard.tls.certresolver=myzerossl"
+
+      # redirect all to https
+      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.http-catchall.entrypoints=web"
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    command: -H unix:///var/run/docker.sock --admin-password ${PORTAINER_ADMIN_PASSWORD}
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer:/data
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portainer.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.portainer.entrypoints=websecure"
+      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+      - "traefik.http.routers.portainer.service=portainer"
+      - "traefik.http.routers.portainer.tls.certresolver=myzerossl"
+      
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+networks:
+  proxynet:
+    name: proxynet
+
+volumes:
+ traefik:
+    driver: zfs
+ portainer:
+    driver: zfs
+
+
