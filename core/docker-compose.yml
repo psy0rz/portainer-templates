@@ -26,6 +26,8 @@ services:
       - "--certificatesresolvers.myzerossl.acme.eab.kid=${ZEROSSL_KID}" 
       - "--certificatesresolvers.myzerossl.acme.eab.hmacEncoded=${ZEROSSL_HMAC}"
       - "--certificatesresolvers.myzerossl.acme.httpChallenge.entryPoint=web"
+      - "--accessLog"
+
 
     ports:
       - "80:80"
