@@ -1,4 +1,12 @@
 # Wordpress Openlitespeed
+#
+# Dont forget to install the Redis Object Cache plugin: https://wordpress.org/plugins/redis-cache/
+# Add this to wp-config.php and activate it:
+#   define( 'WP_REDIS_HOST', 'redis' );
+# 
+# Dont forget to install the Litespeed cache plugin: https://wordpress.org/plugins/litespeed-cache/
+# Activate it and Apply a caching preset.
+
 
 version: '3.1'
 services:
@@ -16,15 +24,25 @@ services:
 
     labels:
       - traefik.enable=true
-      
+
       #https
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.entrypoints=websecure
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.rule=Host(${TRAEFIK_HOSTS})
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls.certresolver=myzerossl 
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls=true
 
+      # add X-forwarded headers
+      # - traefik.http.middlewares.${COMPOSE_PROJECT_NAME}-headers-forwarded.headers.customrequestheaders.X-Forwarded-Proto=https
+      # - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.middlewares=${COMPOSE_PROJECT_NAME}-headers-forwarded
+      
+      # service port
+      - traefik.http.services.${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=80
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.service=${COMPOSE_PROJECT_NAME}
+      
+
     volumes:
-      - wordpress:/var/www/html/localhost
+      - wordpress:/var/www/vhosts/localhost/html
+
     networks:
       - proxynet
       - default

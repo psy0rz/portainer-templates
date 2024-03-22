@@ -29,6 +29,7 @@
             "title": "Wordpress vanilla",
             "description": "Default official wordpress image",
             "platform": "linux",
+            "note": "<h1>Do not forget to install redis plugin. See stack editor for more info. </h1>",
             "repository": {
                 "url": "https://github.com/psy0rz/portainer-templates",
                 "stackfile": "wordpress/docker-compose.yml"
@@ -51,7 +52,7 @@
             "type": 3,
             "title": "Wordpress litespeed",
             "description": "Openlitespeed server, for Wordpress",
-            "note": "You'll have to unpack wordpress yourself.",
+            "note": "You'll have to unpack wordpress yourself. <h1>Do not forget to install redis and litespeed plugins. See stack editor for more info. </h1>",
             "platform": "linux",
             "repository": {
                 "url": "https://github.com/psy0rz/portainer-templates",

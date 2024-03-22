@@ -1,4 +1,9 @@
 # Vanilla wordpress 
+#
+# Dont forget to install the Redis Object Cache plugin: https://wordpress.org/plugins/redis-cache/
+# Add this to wp-config.php:
+#   define( 'WP_REDIS_HOST', 'redis' );
+
 
 version: '3.1'
 services:
