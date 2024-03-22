@@ -3,7 +3,7 @@
 version: '3.1'
 services:
   wordpress:
-    image: litespeedtech/openlitespeed:${OLS_VERSION}-${PHP_VERSION}
+    image: litespeedtech/openlitespeed:latest
 
     restart: unless-stopped
 
