@@ -50,7 +50,7 @@ services:
     volumes:
       - db:/var/lib/mysql
     ports:
-     - 3306:127.0.0.1:${MYSQL_PORT}
+     - 127.0.0.1:${MYSQL_PORT}:3306
     
 
 
