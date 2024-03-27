@@ -8,19 +8,16 @@
 # Activate it and Apply a caching preset.
 
 
+# Migrate tips:
+# update wp_options set option_value='https://newdomain.nl' where option_name='home';
+# update wp_options set option_value='https://newdomain.nl' where option_name='siteurl';
+
 version: '3.1'
 services:
   wordpress:
     image: litespeedtech/openlitespeed:latest
 
     restart: unless-stopped
-
-    environment:
-      WORDPRESS_DB_HOST: db
-      WORDPRESS_DB_USER: wordpress
-      WORDPRESS_DB_PASSWORD: wordpress
-      WORDPRESS_DB_NAME: wordpress
-      WORDPRESS_TABLE_PREFIX: wp_
 
     labels:
       - traefik.enable=true

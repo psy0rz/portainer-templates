@@ -4,6 +4,9 @@
 # Add this to wp-config.php:
 #   define( 'WP_REDIS_HOST', 'redis' );
 
+# Migrate tips:
+# update wp_options set option_value='https://newdomain.nl' where option_name='home';
+# update wp_options set option_value='https://newdomain.nl' where option_name='siteurl';
 
 version: '3.1'
 services:

@@ -9,7 +9,7 @@ version: "3.3"
 services:
   traefik:
     image: "traefik:latest"
-    restart: always
+    restart: unless-stopped
 
     command:
       - "--log.level=INFO"
@@ -64,7 +64,7 @@ services:
   portainer:
     image: portainer/portainer-ce:latest
     command: -H unix:///var/run/docker.sock --admin-password ${PORTAINER_ADMIN_PASSWORD}
-    restart: always
+    restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer:/data
@@ -78,6 +78,7 @@ services:
       - "traefik.http.routers.portainer.tls.certresolver=myzerossl"
       
   watchtower:
+    restart: unless-stopped
     image: containrrr/watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
