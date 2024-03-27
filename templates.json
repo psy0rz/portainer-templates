@@ -38,13 +38,14 @@
                 {
                     "name": "TRAEFIK_HOSTS",
                     "description": "Traefik hostnames (comma separated, quoted with `backticks`)",
-                    "label": "Traefik hostnames"
+                    "label": "Traefik hostnames",
+                    "default": "`example.com`,`www.example.com`"
                 },
                 {
                     "name": "POSTFIX_HOSTNAME",
                     "description": "Important to not get into spam boxes.",
                     "label": "Postfix hostname",
-                    "default": "example.somedomain"
+                    "default": "example.com"
                 },
                 {
                     "name": "MYSQL_PORT",
@@ -68,7 +69,8 @@
                 {
                     "name": "TRAEFIK_HOSTS",
                     "description": "Traefik hostnames (comma separated, quoted with `backticks`)",
-                    "label": "Traefik hostnames"
+                    "label": "Traefik hostnames",
+                    "default": "`example.com`,`www.example.com`"
                 },
                 {
                     "name": "POSTFIX_HOSTNAME",
