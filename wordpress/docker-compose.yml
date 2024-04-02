@@ -39,6 +39,9 @@ services:
       - proxynet
       - default
 
+    ports:
+     - 127.0.0.1:${HTTP_PORT}:80
+
   db:
     image: mysql:8.2
     restart: unless-stopped

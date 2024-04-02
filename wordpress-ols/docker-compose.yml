@@ -36,6 +36,8 @@ services:
       - traefik.http.services.${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=80
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.service=${COMPOSE_PROJECT_NAME}
       
+    ports:
+     - 127.0.0.1:${HTTP_PORT}:80
 
     volumes:
       - wordpress:/var/www/vhosts/localhost/html

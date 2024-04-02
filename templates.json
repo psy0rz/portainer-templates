@@ -21,6 +21,12 @@
                     "description": "Important to not get into spam boxes.",
                     "label": "Postfix hostname",
                     "default": "example.somedomain"
+                },
+                {
+                    "name": "HTTP_PORT",
+                    "description": "Local webserver port for testing and development",
+                    "label": "Http local port. (needs to be unique!)",
+                    "default": "20001"
                 }
             ]
         },
@@ -52,6 +58,12 @@
                     "description": "Local MySql port for management (connect via ssh to localhost on this port with your sql manager)",
                     "label": "MySql local port. (needs to be unique!)",
                     "default": "10001"
+                },
+                {
+                    "name": "HTTP_PORT",
+                    "description": "Local webserver port for testing and development",
+                    "label": "Http local port. (needs to be unique!)",
+                    "default": "20001"
                 }
             ]
         },
@@ -83,6 +95,12 @@
                     "description": "Local MySql port for management (connect via ssh to localhost on this port with your sql manager)",
                     "label": "MySql local port. (needs to be unique!)",
                     "default": "10001"
+                },
+                {
+                    "name": "HTTP_PORT",
+                    "description": "Local webserver port for testing and development",
+                    "label": "Http local port. (needs to be unique!)",
+                    "default": "20001"
                 }
             ]
         }
