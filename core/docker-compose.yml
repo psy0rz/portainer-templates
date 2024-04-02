@@ -4,6 +4,8 @@
 
 # https://raw.githubusercontent.com/psy0rz/portainer-templates/main/templates.json
 
+# Treafik dashboard is on https://host/treafik/dashboard
+
 version: "3.3"
 
 services:
