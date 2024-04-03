@@ -80,7 +80,7 @@ services:
     volumes:
       - wordpress:/repo
     ports:
-      - 3001:3001
+      - 127.0.0.1:${GULP_PORT}:3001
     stop_grace_period: 0s
 
 

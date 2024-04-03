@@ -67,6 +67,12 @@
                     "default": "20001"
                 },
                 {
+                    "name": "GULP_PORT",
+                    "description": "Local gulp development port",
+                    "label": "Gulp local port, only when dev profile is enabled. (needs to be unique!)",
+                    "default": "30001"
+                },
+                {
                     "name": "COMPOSE_PROFILES",
                     "description": "Which profiles to enable. (dev=development gulp service)",
                     "label": "Profile list",
@@ -108,6 +114,12 @@
                     "description": "Local webserver port for testing and development",
                     "label": "Http local port. (needs to be unique!)",
                     "default": "20001"
+                },,
+                {
+                    "name": "GULP_PORT",
+                    "description": "Local gulp development port",
+                    "label": "Gulp local port, only when dev profile is enabled. (needs to be unique!)",
+                    "default": "30001"
                 },
                 {
                     "name": "COMPOSE_PROFILES",
