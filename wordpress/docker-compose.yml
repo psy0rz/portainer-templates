@@ -56,6 +56,17 @@ services:
      - 127.0.0.1:${MYSQL_PORT}:3306
     
 
+  gulp:
+    build: /root/portainer-templates/wordpress-ols/build/gulp
+    profiles:
+      - dev
+    volumes:
+      - wordpress:/repo
+    ports:
+      - 127.0.0.1:${GULP_PORT}:3001
+    stop_grace_period: 0s
+    restart: unless-stopped
+
 
   smtp:
     image: mwader/postfix-relay

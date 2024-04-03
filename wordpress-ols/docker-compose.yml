@@ -82,7 +82,7 @@ services:
     ports:
       - 127.0.0.1:${GULP_PORT}:3001
     stop_grace_period: 0s
-
+    restart: unless-stopped
 
 networks:
   proxynet:
