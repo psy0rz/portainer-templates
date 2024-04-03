@@ -74,7 +74,7 @@ services:
 
 
   gulp:
-    build: /root/portainer-templates/wordpress-ols/build/gulp
+    build: ./build/gulp
     profiles:
       - dev
     volumes:
