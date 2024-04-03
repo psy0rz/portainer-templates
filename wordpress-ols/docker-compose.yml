@@ -41,6 +41,8 @@ services:
 
     volumes:
       - wordpress:/var/www/vhosts/localhost/html
+      # see https://github.com/litespeedtech/ols-docker-env/issues/77
+      - logs:/usr/local/lsws/logs/
 
     networks:
       - proxynet
@@ -80,3 +82,6 @@ volumes:
     driver: zfs
   db:
     driver: zfs
+  logs:
+    driver: zfs
+    
