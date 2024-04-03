@@ -71,7 +71,18 @@ services:
   redis:
     image: redis:alpine
     restart: unless-stopped
-    
+
+
+  gulp:
+    build: /root/portainer-templates/wordpress-ols/build/gulp
+    profiles:
+      - dev
+    volumes:
+      - wordpress:/repo
+    ports:
+      - 3001:3001
+    stop_grace_period: 0s
+
 
 networks:
   proxynet:

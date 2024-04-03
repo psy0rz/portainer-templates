@@ -65,6 +65,12 @@
                     "description": "Local webserver port for testing and development",
                     "label": "Http local port. (needs to be unique!)",
                     "default": "20001"
+                },
+                {
+                    "name": "COMPOSE_PROFILES",
+                    "description": "Which profiles to enable. (dev=development gulp service)",
+                    "label": "Profile list",
+                    "default": ""
                 }
             ]
         },
@@ -102,6 +108,12 @@
                     "description": "Local webserver port for testing and development",
                     "label": "Http local port. (needs to be unique!)",
                     "default": "20001"
+                },
+                {
+                    "name": "COMPOSE_PROFILES",
+                    "description": "Which profiles to enable. (dev=development gulp service)",
+                    "label": "Profile list",
+                    "default": ""
                 }
             ]
         }
