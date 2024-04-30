@@ -58,7 +58,7 @@ services:
       - "traefik.http.routers.dashboard.tls.certresolver=myzerossl"
 
       # redirect all to https
-      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.http-catchall.rule=hostregexp(`.*`)"
       - "traefik.http.routers.http-catchall.entrypoints=web"
       - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
