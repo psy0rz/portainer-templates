@@ -13,9 +13,9 @@
             "env": [
                 {
                     "name": "TRAEFIK_HOSTS",
-                    "description": "Traefik hostnames (comma separated, quoted with `backticks`)",
+                    "description": "Traefik matcher (https://doc.traefik.io/traefik/v3.0/routing/routers/#rule)",
                     "label": "Traefik hostnames",
-                    "default": "`example.com`,`www.example.com`"
+                    "default": "Host(`example.com`) || Host(`www.example.com`)"
                 },
                 {
                     "name": "POSTFIX_HOSTNAME",
@@ -44,10 +44,11 @@
             "env": [
                 {
                     "name": "TRAEFIK_HOSTS",
-                    "description": "Traefik hostnames (comma separated, quoted with `backticks`)",
+                    "description": "Traefik matcher (https://doc.traefik.io/traefik/v3.0/routing/routers/#rule)",
                     "label": "Traefik hostnames",
-                    "default": "`example.com`,`www.example.com`"
+                    "default": "Host(`example.com`) || Host(`www.example.com`)"
                 },
+            },
                 {
                     "name": "POSTFIX_HOSTNAME",
                     "description": "Important to not get into spam boxes.",
@@ -93,9 +94,9 @@
             "env": [
                 {
                     "name": "TRAEFIK_HOSTS",
-                    "description": "Traefik hostnames (comma separated, quoted with `backticks`)",
+                    "description": "Traefik matcher (https://doc.traefik.io/traefik/v3.0/routing/routers/#rule)",
                     "label": "Traefik hostnames",
-                    "default": "`example.com`,`www.example.com`"
+                    "default": "Host(`example.com`) || Host(`www.example.com`)"
                 },
                 {
                     "name": "POSTFIX_HOSTNAME",
