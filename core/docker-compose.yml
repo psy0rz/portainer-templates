@@ -47,7 +47,7 @@ services:
       # Traefik status page
       - "traefik.enable=true"
 
-      - "traefik.http.routers.dashboard.rule=Host(`${DOMAIN}`) && ( PathPrefix(`/traefik`) || HeadersRegexp(`Referer`, `/traefik`) )"
+      - "traefik.http.routers.dashboard.rule=Host(`${DOMAIN}`) && ( PathPrefix(`/traefik`) || HeaderRegexp(`Referer`, `/traefik`) )"
       - "traefik.http.routers.dashboard.priority=999"
       - "traefik.http.routers.dashboard.middlewares=strip-traefik"
       - "traefik.http.middlewares.strip-traefik.stripprefix.prefixes=/traefik"
