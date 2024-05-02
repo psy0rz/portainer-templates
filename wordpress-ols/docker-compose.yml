@@ -43,6 +43,8 @@ services:
       - wordpress:/var/www/vhosts/localhost/html
       # see https://github.com/litespeedtech/ols-docker-env/issues/77
       - logs:/usr/local/lsws/logs/
+      - /root/portainer-templates/wordpress-ols/zzz-custom-php.ini:/usr/local/lsws/lsphp82/etc/php/8.2/mods-available/zzz-custom-php.ini
+
 
     networks:
       - proxynet
