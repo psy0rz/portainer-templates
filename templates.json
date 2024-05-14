@@ -128,6 +128,43 @@
                     "default": ""
                 }
             ]
+        },
+        {
+            "type": 3,
+            "title": "Magento 2",
+            "description": "Magento 2 server, bitnami docker image",
+            "note": "",
+            "platform": "linux",
+            "repository": {
+                "url": "https://github.com/psy0rz/portainer-templates",
+                "stackfile": "magento/docker-compose.yml"
+            },
+            "env": [
+                {
+                    "name": "TRAEFIK_RULE",
+                    "description": "Traefik rule (https://doc.traefik.io/traefik/v3.0/routing/routers/#rule)",
+                    "label": "Traefik rule",
+                    "default": "Host(`example.com`) || Host(`www.example.com`)"
+                },
+                {
+                    "name": "POSTFIX_HOSTNAME",
+                    "description": "Important to not get into spam boxes.",
+                    "label": "Postfix hostname",
+                    "default": "example.somedomain"
+                },
+                {
+                    "name": "MYSQL_PORT",
+                    "description": "Local MySql port for management (connect via ssh to localhost on this port with your sql manager)",
+                    "label": "MySql local port. (needs to be unique!)",
+                    "default": "10001"
+                },
+                {
+                    "name": "HTTP_PORT",
+                    "description": "Local webserver port for testing and development",
+                    "label": "Http local port. (needs to be unique!)",
+                    "default": "20001"
+                }
+            ]
         }
     ]
 }

@@ -1,0 +1,73 @@
+# Bitnami magento 2
+
+version: '3.1'
+services:
+
+  db:
+    image: docker.io/bitnami/mariadb:10.6
+    environment:
+      - MARIADB_USER=magento
+      - MARIADB_DATABASE=magento
+    volumes:
+      - db:/bitnami/mariadb
+    restart: unless-stopped
+
+    ports:
+     - 127.0.0.1:${MYSQL_PORT}:3306
+
+  magento:
+    image: docker.io/bitnami/magento:2.4.7
+    environment:
+      - MAGENTO_HOST=localhost
+      - MAGENTO_DATABASE_HOST=db
+      - MAGENTO_DATABASE_PORT_NUMBER=3306
+      - MAGENTO_DATABASE_USER=magento
+      - MAGENTO_DATABASE_NAME=magento
+      - ELASTICSEARCH_HOST=elasticsearch
+      - ELASTICSEARCH_PORT_NUMBER=9200
+      - MAGENTO_USERNAME=${MAGENTO_USERNAME}
+      - MAGENTO_PASSWORD=${MAGENTO_PASSWORD}
+      - MAGENTO_EMAIL=${MAGENTO_EMAIL}
+      
+    volumes:
+      - magento:/bitnami/magento
+    depends_on:
+      - db
+      - elasticsearch
+
+    ports:
+     - 127.0.0.1:${HTTP_PORT}:8080
+
+    labels:
+      - traefik.enable=true
+    
+      
+      #https
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.entrypoints=websecure
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.rule=${TRAEFIK_RULE}
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls.certresolver=myzerossl 
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls=true
+
+    restart: unless-stopped
+
+  elasticsearch:
+    image: docker.io/bitnami/elasticsearch:7
+    volumes:
+      - elasticsearch:/bitnami/elasticsearch/data
+    restart: unless-stopped
+
+  smtp:
+    image: mwader/postfix-relay
+    environment: 
+      - POSTFIX_myhostname=${POSTFIX_HOSTNAME}
+
+    restart: unless-stopped
+
+
+volumes:
+  db:
+    driver: zfs
+  magento:
+    driver: zfs
+  elasticsearch:
+    driver: zfs
