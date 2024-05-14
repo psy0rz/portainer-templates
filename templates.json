@@ -12,9 +12,9 @@
             },
             "env": [
                 {
-                    "name": "TRAEFIK_HOSTS",
-                    "description": "Traefik matcher (https://doc.traefik.io/traefik/v3.0/routing/routers/#rule)",
-                    "label": "Traefik hostnames",
+                    "name": "TRAEFIK_RULE",
+                    "description": "Traefik rule (https://doc.traefik.io/traefik/v3.0/routing/routers/#rule)",
+                    "label": "Traefik rule",
                     "default": "Host(`example.com`) || Host(`www.example.com`)"
                 },
                 {
@@ -43,9 +43,9 @@
             },
             "env": [
                 {
-                    "name": "TRAEFIK_HOSTS",
-                    "description": "Traefik matcher (https://doc.traefik.io/traefik/v3.0/routing/routers/#rule)",
-                    "label": "Traefik hostnames",
+                    "name": "TRAEFIK_RULE",
+                    "description": "Traefik rule (https://doc.traefik.io/traefik/v3.0/routing/routers/#rule)",
+                    "label": "Traefik rule",
                     "default": "Host(`example.com`) || Host(`www.example.com`)"
                 },
                 {
@@ -92,9 +92,9 @@
             },
             "env": [
                 {
-                    "name": "TRAEFIK_HOSTS",
-                    "description": "Traefik matcher (https://doc.traefik.io/traefik/v3.0/routing/routers/#rule)",
-                    "label": "Traefik hostnames",
+                    "name": "TRAEFIK_RULE",
+                    "description": "Traefik rule (https://doc.traefik.io/traefik/v3.0/routing/routers/#rule)",
+                    "label": "Traefik rule",
                     "default": "Host(`example.com`) || Host(`www.example.com`)"
                 },
                 {
