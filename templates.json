@@ -177,7 +177,7 @@
                 {
                     "name": "MAGENTO_PASSWORD",
                     "label": "Magento admin password",
-                    "default": "insecure!!"
+                    "default": "magentoinsecure123"
                 },
                 {
                     "name": "MAGENTO_EMAIL",
