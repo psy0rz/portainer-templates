@@ -48,7 +48,6 @@
                     "label": "Traefik hostnames",
                     "default": "Host(`example.com`) || Host(`www.example.com`)"
                 },
-            },
                 {
                     "name": "POSTFIX_HOSTNAME",
                     "description": "Important to not get into spam boxes.",
