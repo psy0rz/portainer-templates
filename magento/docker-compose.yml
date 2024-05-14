@@ -9,6 +9,8 @@ services:
       - MARIADB_USER=magento
       - MARIADB_PASSWORD=magento
       - MARIADB_DATABASE=magento
+      - MARIADB_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+
     volumes:
       - db:/bitnami/mariadb
     restart: unless-stopped
@@ -50,6 +52,10 @@ services:
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls.certresolver=myzerossl 
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls=true
 
+    networks:
+      - proxynet
+      - default
+
     restart: unless-stopped
 
   elasticsearch:
@@ -65,6 +71,10 @@ services:
 
     restart: unless-stopped
 
+
+networks:
+  proxynet:
+    name: proxynet
 
 volumes:
   db:

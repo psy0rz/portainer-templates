@@ -159,10 +159,30 @@
                     "default": "10001"
                 },
                 {
+                    "name": "MYSQL_ROOT_PASSWORD",
+                    "label": "Mysql root password",
+                    "default": "insecure!!"
+                },
+                {
                     "name": "HTTP_PORT",
                     "description": "Local webserver port for testing and development",
                     "label": "Http local port. (needs to be unique!)",
                     "default": "20001"
+                },
+                {
+                    "name": "MAGENTO_USERNAME",
+                    "label": "Magento admin user",
+                    "default": "admin"
+                },
+                {
+                    "name": "MAGENTO_PASSWORD",
+                    "label": "Magento admin password",
+                    "default": "insecure!!"
+                },
+                {
+                    "name": "MAGENTO_EMAIL",
+                    "label": "Magento admin email",
+                    "default": "example@some.domain"
                 }
             ]
         }
