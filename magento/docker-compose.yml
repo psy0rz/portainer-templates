@@ -7,6 +7,7 @@ services:
     image: docker.io/bitnami/mariadb:10.6
     environment:
       - MARIADB_USER=magento
+      - MARIADB_PASSWORD=magento
       - MARIADB_DATABASE=magento
     volumes:
       - db:/bitnami/mariadb
@@ -23,6 +24,7 @@ services:
       - MAGENTO_DATABASE_PORT_NUMBER=3306
       - MAGENTO_DATABASE_USER=magento
       - MAGENTO_DATABASE_NAME=magento
+      - MAGENTO_DATABASE_PASSWORD=magento
       - ELASTICSEARCH_HOST=elasticsearch
       - ELASTICSEARCH_PORT_NUMBER=9200
       - MAGENTO_USERNAME=${MAGENTO_USERNAME}
