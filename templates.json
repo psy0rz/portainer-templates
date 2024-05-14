@@ -183,6 +183,11 @@
                     "name": "MAGENTO_EMAIL",
                     "label": "Magento admin email",
                     "default": "example@some.domain"
+                },
+                {
+                    "name": "MAGENTO_HOST",
+                    "label": "Magento main domain",
+                    "default": "www.example.com"
                 }
             ]
         }

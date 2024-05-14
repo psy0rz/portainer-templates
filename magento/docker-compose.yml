@@ -32,6 +32,7 @@ services:
       - MAGENTO_USERNAME=${MAGENTO_USERNAME}
       - MAGENTO_PASSWORD=${MAGENTO_PASSWORD}
       - MAGENTO_EMAIL=${MAGENTO_EMAIL}
+      - MAGENTO_HOST=${MAGENTO_HOST}
       
     volumes:
       - magento:/bitnami/magento
