@@ -1,0 +1,15 @@
+ ===============================[1;32m
+   ____        _        __  __
+  |  _ \  __ _| |_ _   _\ \/ /
+  | | | |/ _` | __| | | |\  /
+  | |_| | (_| | |_| |_| |/  \
+  |____/ \__,_|\__|\__,_/_/\_\  [0m
+                  Magento Shell
+ ===============================
+
+ Mysql host     : db
+ Mysql user     : magento
+ Mysql password : magento
+ Mysql database : magento
+
+ Magento path   : /bitnami/magento

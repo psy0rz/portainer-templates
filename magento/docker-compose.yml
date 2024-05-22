@@ -92,6 +92,7 @@ services:
       - magento:/bitnami/magento
     restart: unless-stopped
 
+
 networks:
   proxynet:
     name: proxynet
