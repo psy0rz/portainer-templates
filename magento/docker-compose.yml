@@ -90,6 +90,7 @@ services:
     volumes:
       - ssh:/bitnami
       - magento:/bitnami/magento
+    restart: unless-stopped
 
 networks:
   proxynet:
