@@ -19,7 +19,7 @@ services:
      - 127.0.0.1:${MYSQL_PORT}:3306
 
   magento:
-    image: docker.io/bitnami/magento:2.4.7
+    image: docker.io/bitnami/magento:$MAGENTO_VERSION
     environment:
       - MAGENTO_HOST=localhost
       - MAGENTO_DATABASE_HOST=db
@@ -77,6 +77,19 @@ services:
 
     restart: unless-stopped
 
+  ssh:
+    hostname: ${COMPOSE_PROJECT_NAME}
+    build:
+      context: ./build/ssh
+      args:
+        - MAGENTO_VERSION=${MAGENTO_VERSION}
+    environment:
+       - SSH_KEY=${SSH_KEY}
+    ports:
+      - ${SSH_PORT}:22
+    volumes:
+      - ssh:/bitnami
+      - magento:/bitnami/magento
 
 networks:
   proxynet:
@@ -88,4 +101,6 @@ volumes:
   magento:
     driver: zfs
   elasticsearch:
+    driver: zfs
+  ssh:
     driver: zfs

@@ -170,6 +170,11 @@
                     "default": "20001"
                 },
                 {
+                    "name": "MAGENTO_VERSION",
+                    "label": "Magento version to use",
+                    "default": "2.4.7"
+                },
+                {
                     "name": "MAGENTO_USERNAME",
                     "label": "Magento admin user",
                     "default": "admin"
@@ -188,6 +193,16 @@
                     "name": "MAGENTO_HOST",
                     "label": "Magento main domain",
                     "default": "www.example.com"
+                },
+                {
+                    "name": "SSH_PORT",
+                    "label": "Public ssh port",
+                    "default": "30001"
+                },
+                {
+                    "name": "SSH_KEY",
+                    "label": "Ssh key",
+                    "default": ""
                 }
             ]
         }
