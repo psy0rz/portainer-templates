@@ -1,0 +1,41 @@
+# Mailchannels relay
+
+version: '3.1'
+services:
+
+  mail:
+    hostname: mail
+    image: mwader/postfix-relay
+
+    # relayhost = smtp.mailchannels.net
+    # smtp_sasl_auth_enable = yes
+    # smtp_sasl_password_maps = hash:/etc/postfix/password
+    # smtp_sasl_security_options = noanonymous
+    # smtpd_sasl_authenticated_header = yes
+    # smtp_tls_security_level = encrypt
+    environment: 
+
+      - POSTFIX_myhostname=${POSTFIX_HOSTNAME}
+      - POSTFIX_relayhost=smtp.mailchannels.net
+      - POSTFIX_smtp_sasl_auth_enable=yes
+      - POSTFIX_smtp_sasl_password_maps=static:${MAILCHANNELS_USER}:${MAILCHANNELS_PASSWORD}
+      - POSTFIX_smtp_sasl_security_options=noanonymous
+      - POSTFIX_smtpd_sasl_authenticated_header=yes
+      - POSTFIX_smtp_tls_security_level=encrypt
+
+
+    restart: unless-stopped
+    networks:
+      - proxynet
+      - default
+
+
+networks:
+  proxynet:
+    name: proxynet
+
+# volumes:
+#   wordpress:
+#     driver: zfs
+#   db:
+#     driver: zfs
