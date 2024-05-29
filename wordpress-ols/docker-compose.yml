@@ -16,7 +16,11 @@ version: '3.1'
 services:
   wordpress:
     # dont forget to update zzz-custom-php.ini path below, if you change this tag to a different php version:
-    image: litespeedtech/openlitespeed:1.8.1-lsphp82
+    # image: litespeedtech/openlitespeed:1.8.1-lsphp82
+    build: 
+     context: ./build/gulp
+     args: 
+       
 
 
     restart: unless-stopped
@@ -65,12 +69,12 @@ services:
     ports:
      - 127.0.0.1:${MYSQL_PORT}:3306
 
-  smtp:
-    image: mwader/postfix-relay
-    environment: 
-      - POSTFIX_myhostname=${POSTFIX_HOSTNAME}
+  # smtp:
+  #   image: mwader/postfix-relay
+  #   environment: 
+  #     - POSTFIX_myhostname=${POSTFIX_HOSTNAME}
 
-    restart: unless-stopped
+  #   restart: unless-stopped
 
   redis:
     image: redis:alpine
