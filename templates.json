@@ -48,12 +48,7 @@
                     "label": "Traefik rule",
                     "default": "Host(`example.com`) || Host(`www.example.com`)"
                 },
-                {
-                    "name": "POSTFIX_HOSTNAME",
-                    "description": "Important to not get into spam boxes.",
-                    "label": "Postfix hostname",
-                    "default": "example.com"
-                },
+
                 {
                     "name": "MYSQL_PORT",
                     "description": "Local MySql port for management (connect via ssh to localhost on this port with your sql manager)",
@@ -96,12 +91,6 @@
                     "description": "Traefik rule (https://doc.traefik.io/traefik/v3.0/routing/routers/#rule)",
                     "label": "Traefik rule",
                     "default": "Host(`example.com`) || Host(`www.example.com`)"
-                },
-                {
-                    "name": "POSTFIX_HOSTNAME",
-                    "description": "Important to not get into spam boxes.",
-                    "label": "Postfix hostname",
-                    "default": "example.somedomain"
                 },
                 {
                     "name": "MYSQL_PORT",

@@ -3,7 +3,9 @@
 # Dont forget to install the Redis Object Cache plugin: https://wordpress.org/plugins/redis-cache/
 # Add this to wp-config.php:
 #   define( 'WP_REDIS_HOST', 'redis' );
-
+#
+# Add a wordpress mail-plugin to use the host 'mail' to mail, on port 25, without authentication. And setup the mail-stack.
+#
 # Migrate tips:
 # update wp_options set option_value='https://newdomain.nl' where option_name='home';
 # update wp_options set option_value='https://newdomain.nl' where option_name='siteurl';
@@ -68,12 +70,12 @@ services:
     restart: unless-stopped
 
 
-  smtp:
-    image: mwader/postfix-relay
-    environment: 
-      - POSTFIX_myhostname=${POSTFIX_HOSTNAME}
+  # smtp:
+  #   image: mwader/postfix-relay
+  #   environment: 
+  #     - POSTFIX_myhostname=${POSTFIX_HOSTNAME}
 
-    restart: unless-stopped
+  #   restart: unless-stopped
 
   redis:
     image: redis:alpine

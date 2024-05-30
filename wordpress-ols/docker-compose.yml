@@ -7,8 +7,8 @@
 # Dont forget to install the Litespeed cache plugin: https://wordpress.org/plugins/litespeed-cache/
 # Activate it and Apply a caching preset.
 #
-# Set mail envelope in index.php or wp-config.php:
-#   ini_set('sendmail_from', 'you@example.com');
+# Add a wordpress mail-plugin to use the host 'mail' to mail, on port 25, without authentication. And setup the mail-stack.
+
 
 
 # Migrate tips:
@@ -19,11 +19,13 @@ version: '3.1'
 services:
   wordpress:
     # dont forget to update zzz-custom-php.ini path below, if you change this tag to a different php version:
-    # image: litespeedtech/openlitespeed:1.8.1-lsphp82
-    build: 
-     context: ./build/ols
-     args: 
-        - OLS_VERSION=${OLS_VERSION}
+    image: litespeedtech/openlitespeed:${OLS_VERSION}
+
+    # Use this if you want a sendmail binary that mails to 'mail' host:
+    # build: 
+    #  context: ./build/ols
+    #  args: 
+    #     - OLS_VERSION=${OLS_VERSION}
        
 
     restart: unless-stopped
