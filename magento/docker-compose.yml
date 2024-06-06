@@ -1,4 +1,5 @@
 # Bitnami magento 2
+# Login via specified ssh port, and user "daemon". 
 
 version: '3.1'
 services:
@@ -76,6 +77,7 @@ services:
       - POSTFIX_myhostname=${POSTFIX_HOSTNAME}
 
     restart: unless-stopped
+
 
   ssh:
     hostname: ${COMPOSE_PROJECT_NAME}
