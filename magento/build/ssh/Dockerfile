@@ -6,7 +6,7 @@ EXPOSE 22
 
 COPY entrypoint.sh /entrypoint.sh
 
-RUN apt-get update && apt-get install -y openssh-server less mc rsync git && \
+RUN apt-get update && apt-get install -y openssh-server less mc rsync git nodejs npm && \
     usermod -s /bin/bash -d /bitnami daemon && \
     mkdir /run/sshd && \
     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config && \
