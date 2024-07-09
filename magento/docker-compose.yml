@@ -36,9 +36,11 @@ services:
       - MAGENTO_HOST=${MAGENTO_HOST}
       - MAGENTO_ENABLE_HTTPS=yes
       - MAGENTO_ENABLE_ADMIN_HTTPS=yes
+      # - MAGENTO_DATA_TO_PERSIST=
+      # probably need to enable these after deploy
+      # - MAGENTO_KEEP_STATIC=yes
       # - MAGENTO_SKIP_BOOTSTRAP=yes
       # - MAGENTO_SKIP_REINDEX=yes
-      # - MAGENTO_DATA_TO_PERSIST=
       
     volumes:
       - magento:/bitnami/magento
