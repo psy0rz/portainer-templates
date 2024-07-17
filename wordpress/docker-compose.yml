@@ -46,7 +46,7 @@ services:
 
   db:
     # image: mysql:8.2
-    image: mysql:11.4
+    image: mariadb:11.4
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: wordpress
