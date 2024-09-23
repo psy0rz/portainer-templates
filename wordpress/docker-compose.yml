@@ -57,6 +57,11 @@ services:
       - db:/var/lib/mysql
     ports:
      - 127.0.0.1:${MYSQL_PORT}:3306
+    profiles:
+      - db
+    networks:
+      - dbnet
+      - default
     
 
   gulp:
@@ -86,6 +91,8 @@ services:
 networks:
   proxynet:
     name: proxynet
+  dbnet:
+    name: dbnet
 
 volumes:
   wordpress:

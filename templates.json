@@ -48,7 +48,6 @@
                     "label": "Traefik rule",
                     "default": "Host(`example.com`) || Host(`www.example.com`)"
                 },
-
                 {
                     "name": "MYSQL_PORT",
                     "description": "Local MySql port for management (connect via ssh to localhost on this port with your sql manager)",
@@ -69,7 +68,7 @@
                 },
                 {
                     "name": "COMPOSE_PROFILES",
-                    "description": "Which profiles to enable. (dev=development gulp service)",
+                    "description": "Which services to enable: dev=development (gulp), db=database",
                     "label": "Profile list",
                     "default": ""
                 }
@@ -114,6 +113,12 @@
                     "name": "OLS_VERSION",
                     "label": "Openlitespeed docker image version",
                     "default": "1.8.1-lsphp82"
+                },
+                {
+                    "name": "COMPOSE_PROFILES",
+                    "description": "Which services to enable: dev=development (gulp), db=database",
+                    "label": "Profile list",
+                    "default": ""
                 }
             ]
         },
