@@ -198,6 +198,40 @@
                     "default": ""
                 }
             ]
+        },
+        {
+            "type": 3,
+            "title": "Shared MariaDB",
+            "description": "Shared via dbnet",
+            "note": "",
+            "platform": "linux",
+            "repository": {
+                "url": "https://github.com/psy0rz/portainer-templates",
+                "stackfile": "mariadb/docker-compose.yml"
+            },
+            "env": [
+                {
+                    "name": "MARIADB_PORT",
+                    "description": "Local MySql port for management (connect via ssh to localhost on this port with your sql manager)",
+                    "label": "MySql local port. (needs to be unique!)",
+                    "default": "10001"
+                },
+                {
+                    "name": "MARIADB_VERSION",
+                    "label": "MariaDB version",
+                    "default": "11"
+                },
+                {
+                    "name": "MARIADB_ROOT_PASSWORD",
+                    "label": "MariaDB root password"
+                },
+                {
+                    "name": "COMPOSE_PROFILES",
+                    "description": "Which services to enable: dev=development (gulp), db=database",
+                    "label": "Profile list",
+                    "default": ""
+                }
+            ]
         }
     ]
 }

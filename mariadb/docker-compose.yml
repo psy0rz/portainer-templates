@@ -1,0 +1,31 @@
+# Shared MariaDB server. 
+# Dont forget to use secure passwords, since all web-app containers can connect it.
+
+version: '3.1'
+services:
+
+  db:
+    image: mariadb:${MARIADB_VERSION}
+    restart: unless-stopped
+    environment:
+      MARIADB_AUTO_UPGRADE: 1
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - db:/var/lib/mysql
+    ports:
+     - 127.0.0.1:${MARIADB_PORT}:3306
+
+    networks:
+     - dbnet    
+
+networks:
+  dbnet:
+    name: dbnet
+
+volumes:
+  db:
+    driver: zfs
