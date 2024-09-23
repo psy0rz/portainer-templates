@@ -214,7 +214,7 @@
                     "name": "MARIADB_PORT",
                     "description": "Local MySql port for management (connect via ssh to localhost on this port with your sql manager)",
                     "label": "MySql local port. (needs to be unique!)",
-                    "default": "10001"
+                    "default": "3306"
                 },
                 {
                     "name": "MARIADB_VERSION",
