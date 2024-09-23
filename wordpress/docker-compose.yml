@@ -39,7 +39,9 @@ services:
       - wordpress:/var/www/html
     networks:
       - proxynet
+      - dbnet
       - default
+
 
     ports:
      - 127.0.0.1:${HTTP_PORT}:80
@@ -59,9 +61,6 @@ services:
      - 127.0.0.1:${MYSQL_PORT}:3306
     profiles:
       - db
-    networks:
-      - dbnet
-      - default
     
 
   gulp:

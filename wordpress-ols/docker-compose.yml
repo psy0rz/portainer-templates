@@ -59,6 +59,7 @@ services:
 
     networks:
       - proxynet
+      - dbnet
       - default
 
   db:
@@ -76,9 +77,6 @@ services:
      - 127.0.0.1:${MYSQL_PORT}:3306
     profiles:
       - db
-    networks:
-      - dbnet
-      - default
 
   # mail:
   #   image: mwader/postfix-relay
