@@ -1,7 +1,9 @@
 # Overview
 These portainer templates are ment to run on a Docker server with ZFS volume support. 
 
-It uses Traefik as reverse proxy with ZeroSSL to create SSL certificates. It uses portainer as web GUI for docker and to create new software stacks.
+In contrast with the default portainer templates, these will run behind a automatic reverse proxy via Traefik. This way you can run many web application containers on one server.
+
+Traefik is configured to use ZeroSSL to get free SSL certificates. It uses portainer as web GUI for docker and to create new software stacks.
 
 # Requirements
 
