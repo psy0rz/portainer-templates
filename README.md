@@ -7,7 +7,7 @@ Traefik is configured to use ZeroSSL to get free SSL certificates. It uses porta
 
 # Requirements
 
-1. Get ZFS support for your /var/lib/docker mountpoint. ( Try https://github.com/psy0rz/alpinebox for a nice installer for Alpine Linux with ZFS rootfs)
+1. Get ZFS support for your /var/lib/docker mountpoint. Try https://github.com/psy0rz/alpinebox for a nice installer for Alpine Linux with ZFS rootfs.
 2. Install Docker and Docker compose cli.
 3. Install https://github.com/csachs/docker-zfs-plugin.git so that you have ZFS volume support.
 
@@ -25,4 +25,9 @@ Traefik is configured to use ZeroSSL to get free SSL certificates. It uses porta
 Now you be able to go to App templates and create a stack.
 
 Your Traefik dashboard is on `/traefik/dashboard#/`
+
+# Backups
+
+Since its all running on ZFS, its easy to make backups and snapshots with my other project: https://pypi.org/project/zfs-autobackup/
+
 
