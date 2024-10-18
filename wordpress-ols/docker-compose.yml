@@ -56,7 +56,7 @@ services:
       # see https://github.com/litespeedtech/ols-docker-env/issues/77
       - logs:/usr/local/lsws/logs/
       - /root/portainer-templates/wordpress-ols/zzz-custom-php.ini:/usr/local/lsws/lsphp82/etc/php/8.2/mods-available/zzz-custom-php.ini
-      - /root/portainer-templates/wordpress-ols/httpd_config.conf:/usr/local/lsws/conf/httpd_config.conf
+      - /root/portainer-templates/wordpress-ols/conf:/usr/local/lsws/conf
 
 
 
