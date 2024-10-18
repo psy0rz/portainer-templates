@@ -43,6 +43,8 @@ services:
       # see https://github.com/litespeedtech/ols-docker-env/issues/77
       - logs:/usr/local/lsws/logs/
       - ./httpd_config.conf:/usr/local/lsws/conf/httpd_config.conf
+      - ./docker.conf:/usr/local/lsws/conf/templates/docker.conf
+
 
 
     networks:
