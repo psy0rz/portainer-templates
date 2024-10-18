@@ -41,6 +41,7 @@ services:
       # - MAGENTO_KEEP_STATIC=yes
       # - MAGENTO_SKIP_BOOTSTRAP=yes
       # - MAGENTO_SKIP_REINDEX=yes
+      - BITNAMI_DEBUG=true
       
     volumes:
       - magento:/bitnami/magento
