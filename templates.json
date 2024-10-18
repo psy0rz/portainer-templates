@@ -26,8 +26,8 @@
                 {
                     "name": "HTTP_PORT",
                     "description": "Local webserver port for testing and development",
-                    "label": "Http local port. (needs to be unique!)",
-                    "default": "20001"
+                    "label": "Http local port. (default=autoselect)",
+                    "default": ""
                 }
             ]
         },
@@ -51,20 +51,20 @@
                 {
                     "name": "MYSQL_PORT",
                     "description": "Local MySql port for management (connect via ssh to localhost on this port with your sql manager)",
-                    "label": "MySql local port. (needs to be unique!)",
-                    "default": "10001"
+                    "label": "MySql local port. (default=autoselect)",
+                    "default": ""
                 },
                 {
                     "name": "HTTP_PORT",
                     "description": "Local webserver port for testing and development",
-                    "label": "Http local port. (needs to be unique!)",
-                    "default": "20001"
+                    "label": "Http local port. (default=autoselect)",
+                    "default": ""
                 },
                 {
                     "name": "GULP_PORT",
                     "description": "Local gulp development port",
-                    "label": "Gulp local port, only when dev profile is enabled. (needs to be unique!)",
-                    "default": "30001"
+                    "label": "Gulp local port, only when dev profile is enabled. (default=autoselect)",
+                    "default": ""
                 },
                 {
                     "name": "COMPOSE_PROFILES",
@@ -94,20 +94,20 @@
                 {
                     "name": "MYSQL_PORT",
                     "description": "Local MySql port for management (connect via ssh to localhost on this port with your sql manager)",
-                    "label": "MySql local port. (needs to be unique!)",
-                    "default": "10001"
+                    "label": "MySql local port. (default=autoselect)",
+                    "default": ""
                 },
                 {
                     "name": "HTTP_PORT",
                     "description": "Local webserver port for testing and development",
-                    "label": "Http local port. (needs to be unique!)",
-                    "default": "20001"
+                    "label": "Http local port. (default=autoselect)",
+                    "default": ""
                 },
                 {
                     "name": "GULP_PORT",
                     "description": "Local gulp development port",
-                    "label": "Gulp local port, only when dev profile is enabled. (needs to be unique!)",
-                    "default": "30001"
+                    "label": "Gulp local port, only when dev profile is enabled. (default=autoselect)",
+                    "default": ""
                 },
                 {
                     "name": "OLS_VERSION",
@@ -148,8 +148,8 @@
                 {
                     "name": "MYSQL_PORT",
                     "description": "Local MySql port for management (connect via ssh to localhost on this port with your sql manager)",
-                    "label": "MySql local port. (needs to be unique!)",
-                    "default": "10001"
+                    "label": "MySql local port. (default=autoselect)",
+                    "default": ""
                 },
                 {
                     "name": "MYSQL_ROOT_PASSWORD",
@@ -159,8 +159,8 @@
                 {
                     "name": "HTTP_PORT",
                     "description": "Local webserver port for testing and development",
-                    "label": "Http local port. (needs to be unique!)",
-                    "default": "20001"
+                    "label": "Http local port. (default=autoselect)",
+                    "default": ""
                 },
                 {
                     "name": "MAGENTO_VERSION",
@@ -189,8 +189,8 @@
                 },
                 {
                     "name": "SSH_PORT",
-                    "label": "Public ssh port",
-                    "default": "30001"
+                    "label": "Public ssh port (default=autoselect)",
+                    "default": ""
                 },
                 {
                     "name": "SSH_KEY",
@@ -213,7 +213,7 @@
                 {
                     "name": "MARIADB_PORT",
                     "description": "Local MySql port for management (connect via ssh to localhost on this port with your sql manager)",
-                    "label": "MySql local port. (needs to be unique!)",
+                    "label": "MySql local port. (needs to be unique. blank=autoselect)",
                     "default": "3306"
                 },
                 {
@@ -247,14 +247,14 @@
                 {
                     "name": "MYSQL_PORT",
                     "description": "Local MySql port for management (connect via ssh to localhost on this port with your sql manager)",
-                    "label": "MySql local port. (needs to be unique!)",
-                    "default": "10001"
+                    "label": "MySql local port. (default=autoselect)",
+                    "default": ""
                 },
                 {
                     "name": "HTTP_PORT",
                     "description": "Local webserver port for testing and development",
-                    "label": "Http local port. (needs to be unique!)",
-                    "default": "20001"
+                    "label": "Http local port. (default=autoselect)",
+                    "default": ""
                 },
                 {
                     "name": "OLS_VERSION",
