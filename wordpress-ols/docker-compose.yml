@@ -28,6 +28,8 @@ services:
     #  args: 
     #     - OLS_VERSION=${OLS_VERSION}
        
+    stop_grace_period: 0s
+
 
     restart: unless-stopped
 
@@ -91,6 +93,7 @@ services:
   redis:
     image: redis:alpine
     restart: unless-stopped
+    stop_grace_period: 0s
 
 
   gulp:

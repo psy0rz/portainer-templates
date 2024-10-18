@@ -67,6 +67,7 @@ services:
       - default
 
     restart: unless-stopped
+    stop_grace_period: 0s
 
   elasticsearch:
     image: docker.io/bitnami/elasticsearch:7
@@ -80,6 +81,7 @@ services:
       - POSTFIX_myhostname=${POSTFIX_HOSTNAME}
 
     restart: unless-stopped
+    stop_grace_period: 0s
 
 
   ssh:
@@ -96,6 +98,7 @@ services:
       - ssh:/bitnami
       - magento:/bitnami/magento
     restart: unless-stopped
+    stop_grace_period: 0s
 
 
 networks:

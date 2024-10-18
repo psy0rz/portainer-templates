@@ -15,6 +15,7 @@ services:
     volumes:
       - config:/config
     restart: unless-stopped
+    stop_grace_period: 0s
 
     labels:
       - traefik.enable=true
@@ -40,6 +41,7 @@ services:
       - POSTFIX_myhostname=${POSTFIX_HOSTNAME}
 
     restart: unless-stopped
+    stop_grace_period: 0s
 
 networks:
   proxynet:

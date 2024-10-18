@@ -18,6 +18,7 @@ services:
     image: wordpress
 
     restart: unless-stopped
+    stop_grace_period: 0s
 
     environment:
       WORDPRESS_DB_HOST: db
@@ -85,7 +86,8 @@ services:
   redis:
     image: redis:alpine
     restart: unless-stopped
-    
+    stop_grace_period: 0s
+  
 
 networks:
   proxynet:
