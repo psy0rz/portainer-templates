@@ -41,8 +41,8 @@ services:
       - web:/var/www/vhosts/localhost/html
       # see https://github.com/litespeedtech/ols-docker-env/issues/77
       - logs:/usr/local/lsws/logs/
-      - ./symfony-ols/httpd_config.conf:/usr/local/lsws/conf/httpd_config.conf
-      - ./symfony-ols/docker.conf:/usr/local/lsws/conf/templates/docker.conf
+      - ./httpd_config.conf:/usr/local/lsws/conf/httpd_config.conf
+      - ./docker.conf:/usr/local/lsws/conf/templates/docker.conf
 
 
 
