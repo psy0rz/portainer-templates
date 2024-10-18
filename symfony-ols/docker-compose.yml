@@ -1,13 +1,6 @@
-# Wordpress Openlitespeed
+# Symfony Openlitespeed
 #
-# Dont forget to install the Redis Object Cache plugin: https://wordpress.org/plugins/redis-cache/
-# Add this to wp-config.php and activate it:
-#   define( 'WP_REDIS_HOST', 'redis' );
-# 
-# Dont forget to install the Litespeed cache plugin: https://wordpress.org/plugins/litespeed-cache/
-# Activate it and Apply a caching preset.
-#
-# Add a wordpress mail-plugin to use the host 'mail' to mail, on port 25, without authentication. And setup the mail-stack.
+# Mail smtp host should be mail, and port 25 with authtentication. And setup the shared mail-stack.
 
 
 
@@ -17,15 +10,10 @@
 
 version: '3.1'
 services:
-  wordpress:
+  web:
     # dont forget to update zzz-custom-php.ini path below, if you change this tag to a different php version:
     image: litespeedtech/openlitespeed:${OLS_VERSION}
 
-    # Use this if you want a sendmail binary that mails to 'mail' host:
-    # build: 
-    #  context: ./build/ols
-    #  args: 
-    #     - OLS_VERSION=${OLS_VERSION}
        
 
     restart: unless-stopped
@@ -51,12 +39,10 @@ services:
      - 127.0.0.1:${HTTP_PORT}:80
 
     volumes:
-      - wordpress:/var/www/vhosts/localhost/html
+      - web:/var/www/vhosts/localhost/html
       # see https://github.com/litespeedtech/ols-docker-env/issues/77
       - logs:/usr/local/lsws/logs/
-      - /root/portainer-templates/wordpress-ols/zzz-custom-php.ini:/usr/local/lsws/lsphp82/etc/php/8.2/mods-available/zzz-custom-php.ini
       - ./httpd_config.conf:/usr/local/lsws/conf/httpd_config.conf
-
 
 
     networks:
@@ -80,28 +66,6 @@ services:
     profiles:
       - db
 
-  # mail:
-  #   image: mwader/postfix-relay
-  #   environment: 
-  #     - POSTFIX_myhostname=${POSTFIX_HOSTNAME}
-
-  #   restart: unless-stopped
-
-  redis:
-    image: redis:alpine
-    restart: unless-stopped
-
-
-  gulp:
-    build: ./build/gulp
-    profiles:
-      - dev
-    volumes:
-      - wordpress:/repo
-    ports:
-      - 127.0.0.1:${GULP_PORT}:3001
-    stop_grace_period: 0s
-    restart: unless-stopped
 
 networks:
   proxynet:
@@ -111,10 +75,10 @@ networks:
 
 
 volumes:
-  wordpress:
-    driver: zfs
-  db:
+  web:
     driver: zfs
   logs:
+    driver: zfs
+  db:
     driver: zfs
     

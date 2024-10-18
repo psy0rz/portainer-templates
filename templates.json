@@ -226,6 +226,48 @@
                     "label": "MariaDB root password (dont use $ in the password!)"
                 }
             ]
+        },
+        {
+            "type": 3,
+            "title": "Symfony litespeed",
+            "description": "Openlitespeed server, for Symfony",
+            "note": "<h1>You'll have to unpack and install symfony yourself.</h1>",
+            "platform": "linux",
+            "repository": {
+                "url": "https://github.com/psy0rz/portainer-templates",
+                "stackfile": "symfony-ols/docker-compose.yml"
+            },
+            "env": [
+                {
+                    "name": "TRAEFIK_RULE",
+                    "description": "Traefik rule (https://doc.traefik.io/traefik/v3.0/routing/routers/#rule)",
+                    "label": "Traefik rule",
+                    "default": "Host(`example.com`) || Host(`www.example.com`)"
+                },
+                {
+                    "name": "MYSQL_PORT",
+                    "description": "Local MySql port for management (connect via ssh to localhost on this port with your sql manager)",
+                    "label": "MySql local port. (needs to be unique!)",
+                    "default": "10001"
+                },
+                {
+                    "name": "HTTP_PORT",
+                    "description": "Local webserver port for testing and development",
+                    "label": "Http local port. (needs to be unique!)",
+                    "default": "20001"
+                },
+                {
+                    "name": "OLS_VERSION",
+                    "label": "Openlitespeed docker image version",
+                    "default": "1.8.1-lsphp82"
+                },
+                {
+                    "name": "COMPOSE_PROFILES",
+                    "description": "Which services to enable: dev=development (gulp), db=database",
+                    "label": "Profile list",
+                    "default": ""
+                }
+            ]
         }
     ]
 }
