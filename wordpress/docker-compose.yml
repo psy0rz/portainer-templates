@@ -3,6 +3,8 @@
 # Dont forget to install the Redis Object Cache plugin: https://wordpress.org/plugins/redis-cache/
 # Add this to wp-config.php:
 #   define( 'WP_REDIS_HOST', 'redis' );
+#   define( 'WP_MEMORY_LIMIT', '256M' );
+#
 #
 # Add a wordpress mail-plugin to use the host 'mail' to mail, on port 25, without authentication. And setup the mail-stack.
 #
