@@ -111,7 +111,7 @@
                 },
                 {
                     "name": "OLS_VERSION",
-                    "label": "Openlitespeed docker image version",
+                    "label": "Openlitespeed docker image version (1.7.11-lsphp73, 1.8.1-lsphp74, 1.8.1-lsphp80, 1.8.2-lsphp81, 1.8.2-lsphp82, 1.8.2-lsphp83)",
                     "default": "1.8.1-lsphp82"
                 },
                 {
@@ -258,7 +258,7 @@
                 },
                 {
                     "name": "OLS_VERSION",
-                    "label": "Openlitespeed docker image version",
+                    "label": "Openlitespeed docker image version (1.7.11-lsphp73, 1.8.1-lsphp74, 1.8.1-lsphp80, 1.8.2-lsphp81, 1.8.2-lsphp82, 1.8.2-lsphp83)",
                     "default": "1.8.1-lsphp82"
                 },
                 {
