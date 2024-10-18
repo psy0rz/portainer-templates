@@ -8,7 +8,6 @@
 # update wp_options set option_value='https://newdomain.nl' where option_name='home';
 # update wp_options set option_value='https://newdomain.nl' where option_name='siteurl';
 
-version: '3.1'
 services:
   web:
     # dont forget to update zzz-custom-php.ini path below, if you change this tag to a different php version:
@@ -42,8 +41,8 @@ services:
       - web:/var/www/vhosts/localhost/html
       # see https://github.com/litespeedtech/ols-docker-env/issues/77
       - logs:/usr/local/lsws/logs/
-      - ./httpd_config.conf:/usr/local/lsws/conf/httpd_config.conf
-      - ./docker.conf:/usr/local/lsws/conf/templates/docker.conf
+      - ./symfony-ols/httpd_config.conf:/usr/local/lsws/conf/httpd_config.conf
+      - ./symfony-ols/docker.conf:/usr/local/lsws/conf/templates/docker.conf
 
 
 
