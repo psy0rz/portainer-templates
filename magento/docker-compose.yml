@@ -1,6 +1,12 @@
 # Bitnami magento 2
 # Login via specified ssh port, and user "daemon". 
 
+#NOTE: expects 8Gb of ram.
+#set vm.max_map_count=1024000 in /etc/sysctl.conf
+#(dont forget to enable sysctl service to boot)
+
+
+
 version: '3.1'
 services:
 
@@ -76,7 +82,7 @@ services:
       - elasticsearch:/bitnami/elasticsearch/data
 
     environment:
-      - ELASTICSEARCH_HEAP_SIZE=3000m
+      - ELASTICSEARCH_HEAP_SIZE=4000m
     restart: unless-stopped
 
   smtp:
