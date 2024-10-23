@@ -71,8 +71,12 @@ services:
 
   elasticsearch:
     image: docker.io/bitnami/elasticsearch:7
+
     volumes:
       - elasticsearch:/bitnami/elasticsearch/data
+
+    environment:
+      - ELASTICSEARCH_HEAP_SIZE=3000m
     restart: unless-stopped
 
   smtp:
