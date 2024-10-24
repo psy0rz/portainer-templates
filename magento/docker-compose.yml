@@ -1,17 +1,13 @@
-# Bitnami magento 2
-# Login via specified ssh port, and user "daemon". 
-
 #NOTE: expects 8Gb of ram.
 #set vm.max_map_count=1024000 in /etc/sysctl.conf
 #(dont forget to enable sysctl service to boot)
 
+# traefik:80 --> varnish:80 ->  nginx:8080 -> fpm:9000
 
-
-version: '3.1'
 services:
 
   db:
-    image: docker.io/bitnami/mariadb:10.6
+    image: mariadb:${MARIADB_VERSION}
     environment:
       - MARIADB_USER=magento
       - MARIADB_PASSWORD=magento
@@ -19,44 +15,27 @@ services:
       - MARIADB_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 
     volumes:
-      - db:/bitnami/mariadb
+      - db:/var/lib/mysql
     restart: unless-stopped
 
     ports:
      - 127.0.0.1:${MYSQL_PORT}:3306
 
-  magento:
-    image: docker.io/bitnami/magento:$MAGENTO_VERSION
-    environment:
-      - MAGENTO_HOST=localhost
-      - MAGENTO_DATABASE_HOST=db
-      - MAGENTO_DATABASE_PORT_NUMBER=3306
-      - MAGENTO_DATABASE_USER=magento
-      - MAGENTO_DATABASE_NAME=magento
-      - MAGENTO_DATABASE_PASSWORD=magento
-      - ELASTICSEARCH_HOST=elasticsearch
-      - ELASTICSEARCH_PORT_NUMBER=9200
-      - MAGENTO_USERNAME=${MAGENTO_USERNAME}
-      - MAGENTO_PASSWORD=${MAGENTO_PASSWORD}
-      - MAGENTO_EMAIL=${MAGENTO_EMAIL}
-      - MAGENTO_HOST=${MAGENTO_HOST}
-      - MAGENTO_ENABLE_HTTPS=yes
-      - MAGENTO_ENABLE_ADMIN_HTTPS=yes
-      # - MAGENTO_DATA_TO_PERSIST=
-      # probably need to enable these after deploy
-      # - MAGENTO_KEEP_STATIC=yes
-      # - MAGENTO_SKIP_BOOTSTRAP=yes
-      # - MAGENTO_SKIP_REINDEX=yes
-      - BITNAMI_DEBUG=true
+
+    stop_grace_period: 10s
+
+  web:
+    image: magento/magento-cloud-docker-nginx:${NGINX_VERSION}
       
     volumes:
-      - magento:/bitnami/magento
-    depends_on:
-      - db
-      - elasticsearch
+      - app:/app
 
     ports:
      - 127.0.0.1:${HTTP_PORT}:8080
+    
+    
+    environment:
+     - MAGEMAGE_RUN_CODE=base
 
     labels:
       - traefik.enable=true
@@ -67,6 +46,7 @@ services:
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.rule=${TRAEFIK_RULE}
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls.certresolver=myzerossl 
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls=true
+      - traefik.http.services.${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=8080
 
     networks:
       - proxynet
@@ -75,15 +55,46 @@ services:
     restart: unless-stopped
     stop_grace_period: 0s
 
-  elasticsearch:
-    image: docker.io/bitnami/elasticsearch:7
-
-    volumes:
-      - elasticsearch:/bitnami/elasticsearch/data
+  fpm:
+    image: magento/magento-cloud-docker-php:${FPM_VERSION}
 
     environment:
-      - ELASTICSEARCH_HEAP_SIZE=4000m
+     - MAGEMAGE_RUN_CODE=base
+
+    volumes:
+     - app:/app
+
     restart: unless-stopped
+    stop_grace_period: 0s
+    command: php-fpm
+
+  cron:
+    image: magento/magento-cloud-docker-php:${CLI_VERSION}
+
+    volumes:
+     - app:/app
+
+    restart: unless-stopped
+    environment:
+      - CRONTAB=* * * * * www /usr/local/bin/php /app/bin/magento cron:run
+    command: cron -f
+
+    stop_grace_period: 0s
+
+  opensearch:
+    image: magento/magento-cloud-docker-opensearch:2.12-1.4.0
+    environment:
+    #  - OPENSEARCH_INITIAL_ADMIN_PASSWORD=NkMUJR*w&9w3m7
+     - cluster.name=opensearch-cluster # Name the cluster
+     - node.name=node1 # Name the node that will run in this container
+    #  - discovery.seed_hosts=node1
+     - cluster.initial_cluster_manager_nodes=node1
+    #  - bootstrap.memory_lock=true # Disable JVM heap memory swapping
+    #  - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx3500m # Set min and max JVM heap sizes to at least 50% of system RAM
+     - DISABLE_INSTALL_DEMO_CONFIG=true
+     - DISABLE_SECURITY_PLUGIN=true
+    restart: unless-stopped
+
 
   smtp:
     image: mwader/postfix-relay
@@ -99,17 +110,15 @@ services:
     build:
       context: ./build/ssh
       args:
-        - MAGENTO_VERSION=${MAGENTO_VERSION}
+        - CLI_VERSION=${CLI_VERSION}
     environment:
        - SSH_KEY=${SSH_KEY}
     ports:
       - ${SSH_PORT}:22
     volumes:
-      - ssh:/bitnami
-      - magento:/bitnami/magento
+     - app:/app
     restart: unless-stopped
     stop_grace_period: 0s
-
 
 networks:
   proxynet:
@@ -117,10 +126,6 @@ networks:
 
 volumes:
   db:
-    driver: zfs
-  magento:
-    driver: zfs
-  elasticsearch:
-    driver: zfs
-  ssh:
-    driver: zfs
+    # driver: zfs
+  app:
+    # driver: zfs
