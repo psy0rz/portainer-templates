@@ -35,7 +35,7 @@ services:
     
     
     environment:
-     - MAGEMAGE_RUN_CODE=base
+     - MAGENTO_RUN_MODE=${MAGENTO_RUN_MODE}
 
     labels:
       - traefik.enable=true
@@ -59,14 +59,15 @@ services:
     image: magento/magento-cloud-docker-php:${FPM_VERSION}
 
     environment:
-     - MAGEMAGE_RUN_CODE=base
+     - MAGENTO_RUN_MODE=${MAGENTO_RUN_MODE}
 
     volumes:
      - app:/app
+     # NOTE: needed because of this bug: https://github.com/magento/magento-cloud-docker/issues/373
+     - ./php-fpm.conf:/usr/local/etc/php-fpm.conf
 
     restart: unless-stopped
     stop_grace_period: 0s
-    command: php-fpm
 
   cron:
     image: magento/magento-cloud-docker-php:${CLI_VERSION}

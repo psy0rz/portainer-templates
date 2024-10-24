@@ -10,7 +10,6 @@ export PHP_VALIDATE_TIMESTAMPS=1
 export COMPOSER_CLEAR_CACHE=false
 export PHP_VALIDATE_TIMESTAMPS=1
 export DEBUG=false
-export MAGENTO_RUN_MODE=production
 export SENDMAIL_PATH=/dev/null
 export PHPRC=${MAGENTO_ROOT}/php.ini
 export PHP_EXTENSIONS="bcmath bz2 calendar exif gd gettext intl mysqli opcache pdo_mysql redis soap sockets sodium sysvmsg sysvsem sysvshm xsl zip pcntl"
