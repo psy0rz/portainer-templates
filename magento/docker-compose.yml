@@ -42,11 +42,12 @@ services:
     
       
       #https
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.entrypoints=websecure
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.rule=${TRAEFIK_RULE}
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls.certresolver=myzerossl 
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls=true
-      - traefik.http.services.${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=8080
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.entrypoints=websecure
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.rule=${TRAEFIK_RULE}
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.tls.certresolver=myzerossl 
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.tls=true
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.priority=1
+      - traefik.http.services.${COMPOSE_PROJECT_NAME}-web.loadbalancer.server.port=8080
 
     networks:
       - proxynet
@@ -83,7 +84,7 @@ services:
     stop_grace_period: 0s
 
   opensearch:
-    image: magento/magento-cloud-docker-opensearch:2.12-1.4.0
+    image: magento/magento-cloud-docker-opensearch:${OPENSEARCH_VERSION}
     environment:
     #  - OPENSEARCH_INITIAL_ADMIN_PASSWORD=NkMUJR*w&9w3m7
      - cluster.name=opensearch-cluster # Name the cluster
@@ -95,6 +96,31 @@ services:
      - DISABLE_INSTALL_DEMO_CONFIG=true
      - DISABLE_SECURITY_PLUGIN=true
     restart: unless-stopped
+
+    #XXX: persitent storage!
+
+
+  #if varnish is stopped, then traefik will directly connect to web container (prio=2 vs prio=1)  
+  #NOTE: if you start this container, make sure you change the full page cache to varnish in the magento backend.
+  #(it will work otherwise but it will be slower)
+  varnish:
+    image: magento/magento-cloud-docker-varnish:${VARNISH_VERSION}
+
+    labels:
+      - traefik.enable=true
+    
+      
+      #https
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-varnish.entrypoints=websecure
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-varnish.rule=${TRAEFIK_RULE}
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-varnish.tls.certresolver=myzerossl 
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-varnish.tls=true
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-varnish.priority=2
+      - traefik.http.services.${COMPOSE_PROJECT_NAME}-varnish.loadbalancer.server.port=80
+
+    networks:
+      - proxynet
+      - default
 
 
   smtp:
