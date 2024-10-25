@@ -99,6 +99,7 @@ services:
     environment:
       TEAM_NAME: "Uw web team"
       HEADLINE: "Website onderhoud"
+      TITLE: "Website onderhoud"
       MAIL_ADDRESS: "info@datux.nl"
       # LINK_COLOR: "#dc8100"
       # THEME: "Light"
