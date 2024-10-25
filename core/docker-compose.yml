@@ -57,11 +57,17 @@ services:
       - "traefik.http.routers.dashboard.service=dashboard"
       - "traefik.http.routers.dashboard.tls.certresolver=myzerossl"
 
-      # redirect all to https
-      - "traefik.http.routers.http-catchall.rule=hostregexp(`.*`)"
-      - "traefik.http.routers.http-catchall.entrypoints=web"
-      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
-      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      # redirect all http to https
+      - traefik.http.routers.http-catchall.rule=hostregexp(`.*`)
+      - traefik.http.routers.http-catchall.entrypoints=web
+      - traefik.http.routers.http-catchall.middlewares=redirect-to-https
+      - traefik.http.routers.http-catchall.priority=-1
+      - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
+
+
+
+    stop_grace_period: 0s
+
 
   portainer:
     image: portainer/portainer-ce:latest
@@ -78,12 +84,48 @@ services:
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
       - "traefik.http.routers.portainer.service=portainer"
       - "traefik.http.routers.portainer.tls.certresolver=myzerossl"
-      
+
+    stop_grace_period: 0s
+
   watchtower:
     restart: unless-stopped
     image: containrrr/watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+
+
+  maintenance:
+    image: wickerlabs/maintenance
+    environment:
+      TEAM_NAME: "Uw web team"
+      HEADLINE: "Website onderhoud"
+      MAIL_ADDRESS: "info@datux.nl"
+      # LINK_COLOR: "#dc8100"
+      # THEME: "Light"
+      PORT: 8080
+      RESPONSE_CODE: "503 Service Unavailable"
+      MESSAGE: "In verband met onderhoud is deze site tijdelijk onbereikbaar. Als dit probleem aanhoudt, neem dan contact met ons op."
+      CONTACT_LINK: "neem contact op"
+
+    labels:
+      - traefik.enable=true
+      # catch all for when containers are down for maintanance:
+      - traefik.http.routers.https-catchall.rule=hostregexp(`.*`)
+      - traefik.http.services.https-catchall.loadbalancer.server.port=8080
+      - traefik.http.routers.https-catchall.entrypoints=websecure
+      - traefik.http.routers.https-catchall.tls=true
+      - traefik.http.routers.https-catchall.priority=-1
+
+
+
+
+
+    stop_grace_period: 0s
+
+
+    networks:
+      - proxynet
+      - default
 
 networks:
   proxynet:
