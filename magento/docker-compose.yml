@@ -169,7 +169,8 @@ services:
     ports:
       - ${SSH_PORT}:22
     volumes:
-     - app:/app
+     - ssh:/app
+     - app:/app/magento
     restart: unless-stopped
     stop_grace_period: 0s
 
@@ -183,4 +184,6 @@ volumes:
   app:
     driver: zfs
   opensearch:
+    driver: zfs
+  ssh:
     driver: zfs

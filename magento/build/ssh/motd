@@ -7,6 +7,8 @@
                   Magento Shell
  ===============================
 
+ Magento path   : /app/magento
+
  Mysql host     : db
  Mysql user     : magento
  Mysql password : magento
@@ -15,4 +17,3 @@
  Opensearch host: opensearch (no authentication)
  Opensearch port: 9200
  
-
