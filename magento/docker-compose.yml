@@ -36,7 +36,7 @@ services:
     image: magento/magento-cloud-docker-nginx:${NGINX_VERSION}
       
     volumes:
-      - app:/app
+      - magento:/app
 
     ports:
      - 127.0.0.1:${HTTP_PORT}:8080
@@ -74,7 +74,7 @@ services:
      - MAGENTO_RUN_MODE=${MAGENTO_RUN_MODE}
 
     volumes:
-     - app:/app
+     - magento:/app
      # NOTE: needed because of this bug: https://github.com/magento/magento-cloud-docker/issues/373
      - ./php-fpm.conf:/usr/local/etc/php-fpm.conf
 
@@ -92,7 +92,7 @@ services:
     image: magento/magento-cloud-docker-php:${CLI_VERSION}
 
     volumes:
-     - app:/app
+     - magento:/app
 
     restart: unless-stopped
     environment:
@@ -170,7 +170,7 @@ services:
       - ${SSH_PORT}:22
     volumes:
      - ssh:/app
-     - app:/app/magento
+     - magento:/app/magento
     restart: unless-stopped
     stop_grace_period: 0s
 
@@ -181,7 +181,7 @@ networks:
 volumes:
   db:
     driver: zfs
-  app:
+  magento:
     driver: zfs
   opensearch:
     driver: zfs
