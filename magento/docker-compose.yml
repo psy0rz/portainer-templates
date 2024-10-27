@@ -179,8 +179,8 @@ networks:
 
 volumes:
   db:
-    # driver: zfs
+    driver: zfs
   app:
-    # driver: zfs
+    driver: zfs
   opensearch:
-    # driver: zfs
+    driver: zfs

@@ -125,7 +125,7 @@
         {
             "type": 3,
             "title": "Magento 2",
-            "description": "Magento 2 server, bitnami docker image",
+            "description": "Magento 2 server, official images",
             "note": "",
             "platform": "linux",
             "repository": {
@@ -161,31 +161,6 @@
                     "description": "Local webserver port for testing and development",
                     "label": "Http local port. (default=autoselect)",
                     "default": ""
-                },
-                {
-                    "name": "MAGENTO_VERSION",
-                    "label": "Magento version to use",
-                    "default": "2.4.7"
-                },
-                {
-                    "name": "MAGENTO_USERNAME",
-                    "label": "Magento admin user",
-                    "default": "admin"
-                },
-                {
-                    "name": "MAGENTO_PASSWORD",
-                    "label": "Magento admin password",
-                    "default": "magentoinsecure123"
-                },
-                {
-                    "name": "MAGENTO_EMAIL",
-                    "label": "Magento admin email",
-                    "default": "example@some.domain"
-                },
-                {
-                    "name": "MAGENTO_HOST",
-                    "label": "Magento main domain",
-                    "default": "www.example.com"
                 },
                 {
                     "name": "SSH_PORT",
