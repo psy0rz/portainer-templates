@@ -76,7 +76,7 @@ services:
     volumes:
      - magento:/app
      # NOTE: needed because of this bug: https://github.com/magento/magento-cloud-docker/issues/373
-     - ./php-fpm.conf:/usr/local/etc/php-fpm.conf
+     - /root/portainer-templates/magento/php-fpm.conf:/usr/local/etc/php-fpm.conf
 
     restart: unless-stopped
     stop_grace_period: 0s
