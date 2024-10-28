@@ -72,8 +72,8 @@ services:
 
     environment:
      - MAGENTO_RUN_MODE=${MAGENTO_RUN_MODE}
-     - UPLOAD_MAX_FILESIZE=64MB
-     - POST_MAX_SIZE=64MB
+     - UPLOAD_MAX_FILESIZE=64M
+     - POST_MAX_SIZE=64M
 
     volumes:
      - magento:/app
