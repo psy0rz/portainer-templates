@@ -100,7 +100,7 @@ services:
 
     restart: unless-stopped
     environment:
-      - CRONTAB=* * * * * www /usr/local/bin/php /app/bin/magento cron:run
+      - CRONTAB=* * * * * www PHP_MEMORY_LIMIT=2G /usr/local/bin/php /app/bin/magento cron:run &>/dev/null
     command: cron -f
 
     stop_grace_period: 0s
