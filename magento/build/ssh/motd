@@ -16,4 +16,7 @@
 
  Opensearch host: opensearch (no authentication)
  Opensearch port: 9200
- 
+
+ SMTP mail host : smtp (no authentication)
+ SMTP mail port : 25
+
