@@ -1,4 +1,4 @@
-export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/app/bin
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/app/magento/bin
 
 #from: https://github.com/magento/magento-cloud-docker/blob/develop/images/php/8.3-cli/Dockerfile
 
