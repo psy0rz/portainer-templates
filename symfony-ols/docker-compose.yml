@@ -1,16 +1,14 @@
 # Symfony Openlitespeed
+
+#### dev container WIP: handmatig doen nog (build/dev/Dockerfile)
+
 #
 # Mail smtp host should be mail, and port 25 with authtentication. And setup the shared mail-stack.
 
 
 
-# Migrate tips:
-# update wp_options set option_value='https://newdomain.nl' where option_name='home';
-# update wp_options set option_value='https://newdomain.nl' where option_name='siteurl';
-
 services:
   web:
-    # dont forget to update zzz-custom-php.ini path below, if you change this tag to a different php version:
     # (1.7.11-lsphp73, 1.8.1-lsphp74, 1.8.1-lsphp80, 1.8.2-lsphp81, 1.8.2-lsphp82, 1.8.2-lsphp83)
     image: litespeedtech/openlitespeed:${OLS_VERSION}
 
