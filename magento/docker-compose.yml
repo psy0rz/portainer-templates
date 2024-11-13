@@ -32,6 +32,9 @@ services:
     depends_on: 
       - web
 
+    profiles:
+      - varnish
+
   web:
     image: magento/magento-cloud-docker-nginx:${NGINX_VERSION}
       

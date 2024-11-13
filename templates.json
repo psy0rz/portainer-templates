@@ -206,6 +206,12 @@
                     "name": "MAGENTO_RUN_MODE",
                     "label": "Magento run mode",
                     "default": "production"
+                },
+                {
+                    "name": "COMPOSE_PROFILES",
+                    "description": "Which services to enable: varnish",
+                    "label": "Profile list",
+                    "default": ""
                 }
             ]
         },
