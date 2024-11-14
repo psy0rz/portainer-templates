@@ -96,6 +96,7 @@ services:
 
   maintenance:
     image: wickerlabs/maintenance
+    restart: unless-stopped
     environment:
       TEAM_NAME: "Uw web team"
       HEADLINE: "Website onderhoud"
