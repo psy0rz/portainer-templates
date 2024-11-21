@@ -3,8 +3,8 @@
 SOURCE=magento
 
 TARGET=magento_dev
-TARGET_URL=https://server.com/
-TARGET_COOKIE_DOMAIN=server.com
+TARGET_URL=https://totalartist.projectlocatie.nl/
+TARGET_COOKIE_DOMAIN=totalartist.projectlocatie.nl
 
 set -e
 
@@ -20,8 +20,10 @@ docker exec -u www -it ${TARGET}-ssh-1 /app/magento/bin/magento config:set web/u
 docker exec -u www -it ${TARGET}-ssh-1 /app/magento/bin/magento config:set web/cookie/cookie_domain $TARGET_COOKIE_DOMAIN
 
 #Deploy
-docker exec -u www -it ${TARGET}-ssh-1 /app/magento/bin/magento cache:flush
-#niet nodig? (duurt 5 minuten)
-#docker exec -u www -it ${TARGET}-ssh-1 /app/magento/bin/magento deploy:mode:set production
+docker stop ${TARGET}-cron-1
+docker exec -u www -it ${TARGET}-ssh-1 /app/magento/bin/magento deploy:mode:set production
+docker exec -u www -it ${TARGET}-ssh-1 /app/magento/bin/magento indexer:reindex
+docker start ${TARGET}-cron-1
+#docker exec -u www -it ${TARGET}-ssh-1 /app/magento/bin/magento cache:flush
 
 echo "MIGRATE: complete"
