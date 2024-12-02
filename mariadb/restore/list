@@ -1,0 +1,4 @@
+#!/bin/bash
+DATASET=${1:-rpool/var/lib/docker/volumes/db1_db}
+
+zfs list -r -t all $DATASET 

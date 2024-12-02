@@ -1,0 +1,25 @@
+# Run a temporary db on a cloned zfs snapshot
+
+version: '3.1'
+services:
+
+  db:
+    container_name: db-restore
+    image: mariadb:${MARIADB_VERSION}
+    restart: no
+    environment:
+      MARIADB_AUTO_UPGRADE: 1
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      
+    volumes:
+      - /var/lib/docker/volumes/restore:/var/lib/mysql
+    ports:
+     - 127.0.0.1:3307:3306
+
+    networks:
+     - dbnet
+
+networks:
+  dbnet:
+    name: dbnet
+

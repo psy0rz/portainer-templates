@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+
+DATASET=$1
+RESTORE_DATASET=rpool/var/lib/docker/volumes/restore
+
+echo "### TIJDELIJKE DATABASE WORD GESTART OP POORT 3307 "
+echo "### DRUK OP CTR-C ALS JE KLAAR BENT"
+echo "### SNAPSHOT: $DATASET"
+
+zfs destroy $RESTORE_DATASET &>/dev/null || true
+zfs clone $DATASET $RESTORE_DATASET
+docker compose up || true
+zfs destroy $RESTORE_DATASET 
