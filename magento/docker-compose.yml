@@ -133,7 +133,8 @@ services:
 
     stop_grace_period: 10s
 
-
+    # needed for magento 2.4 with mariadb 10.6, to make indexing fast
+    command: --optimizer_switch='rowid_filter=off' --optimizer_use_condition_selectivity=1
 
 
   opensearch:
