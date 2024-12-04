@@ -1,0 +1,33 @@
+#!/bin/bash
+
+set -e
+
+chmod +x magento/bin/magento
+magento setup:install \
+--base-url=http://localhost:8080 \
+--db-host=db \
+--db-name=magento \
+--db-user=magento \
+--db-password=magento \
+--admin-firstname=admin \
+--admin-lastname=admin \
+--admin-email=admin@admin.com \
+--admin-user=admin \
+--admin-password=admin123 \
+--language=en_US \
+--currency=EUR \
+--timezone=Europe/Amsterdam \
+--use-rewrites=1 \
+--search-engine=opensearch \
+--opensearch-host=opensearch \
+--opensearch-port=9200 \
+--opensearch-index-prefix=magento2 \
+--opensearch-timeout=15 \
+--backend-frontname admin
+
+#disable 2fa
+magento module:disable Magento_TwoFactorAuth Magento_AdminAdobeImsTwoFactorAuth --clear-static-content
+magento setup:di:compile
+
+magento setup:static-content:deploy -f
+

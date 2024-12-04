@@ -81,8 +81,8 @@ services:
     volumes:
      - magento:/app
      # NOTE: needed because of this bug: https://github.com/magento/magento-cloud-docker/issues/373
-     - /root/portainer-templates/magento/php-fpm.conf:/usr/local/etc/php-fpm.conf
-     - /root/portainer-templates/magento/fixes.ini:/usr/local/etc/php/conf.d/fixes.ini
+     - ${REPO-/root/portainer-templates}/magento/php-fpm.conf:/usr/local/etc/php-fpm.conf
+     - ${REPO-/root/portainer-templates}/root/portainer-templates/magento/fixes.ini:/usr/local/etc/php/conf.d/fixes.ini
 
 
     restart: unless-stopped
@@ -188,10 +188,10 @@ networks:
 
 volumes:
   db:
-    driver: zfs
+    driver: ${VOLUME_DRIVER-zfs}
   magento:
-    driver: zfs
+    driver: ${VOLUME_DRIVER-zfs}
   opensearch:
-    driver: zfs
+    driver: ${VOLUME_DRIVER-zfs}
   ssh:
-    driver: zfs
+    driver: ${VOLUME_DRIVER-zfs}
