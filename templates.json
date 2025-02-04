@@ -119,6 +119,12 @@
                     "description": "Which services to enable: dev=development (gulp), db=database",
                     "label": "Profile list",
                     "default": ""
+                },
+                {
+                    "name": "CRONTAB",
+                    "description": "e.g.: '* * * * * curl google.com'",
+                    "label": "Crontab",
+                    "default": ""
                 }
             ]
         },

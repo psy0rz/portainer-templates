@@ -33,6 +33,11 @@ services:
 
     restart: unless-stopped
 
+
+    environment:
+      CRONTAB: ${CRONTAB}
+
+
     labels:
       - traefik.enable=true
 
@@ -57,8 +62,9 @@ services:
       - wordpress:/var/www/vhosts/localhost/html
       # see https://github.com/litespeedtech/ols-docker-env/issues/77
       - logs:/usr/local/lsws/logs/
-      - /root/portainer-templates/wordpress-ols/zzz-custom-php.ini:/usr/local/lsws/lsphp82/etc/php/8.2/mods-available/zzz-custom-php.ini
-      - /root/portainer-templates/wordpress-ols/conf:/usr/local/lsws/conf
+      - /root/portainer-templates/wordpress-ols/zzz-custom-php.ini:/usr/local/lsws/lsphp82/etc/php/8.2/mods-available/zzz-custom-php.ini:ro
+      - /root/portainer-templates/wordpress-ols/conf:/usr/local/lsws/conf:ro
+      - /root/portainer-templates/wordpress-ols/entrypoint.sh:/entrypoint.sh:ro
 
 
 
