@@ -23,14 +23,8 @@
                     "description": "Important to not get into spam boxes.",
                     "label": "Postfix hostname",
                     "default": "example.somedomain"
-                },
-                {
-                    "name": "HTTP_PORT",
-                    "description": "Local webserver port for testing and development",
-                    "label": "Http local port. (default=autoselect)",
-                    "default": ""
                 }
-            ]
+                        ]
         },
         {
             "type": 3,
@@ -238,12 +232,6 @@
             },
             "env": [
                 {
-                    "name": "MARIADB_PORT",
-                    "description": "Local MySql port for management (connect via ssh to localhost on this port with your sql manager)",
-                    "label": "MySql local port. (needs to be unique. blank=autoselect)",
-                    "default": "3306"
-                },
-                {
                     "name": "MARIADB_VERSION",
                     "label": "MariaDB version",
                     "default": "11"
@@ -273,18 +261,6 @@
                     "default": "Host(`example.com`) || Host(`www.example.com`)"
                 },
                 {
-                    "name": "MYSQL_PORT",
-                    "description": "Local MySql port for management (connect via ssh to localhost on this port with your sql manager)",
-                    "label": "MySql local port. (default=autoselect)",
-                    "default": ""
-                },
-                {
-                    "name": "HTTP_PORT",
-                    "description": "Local webserver port for testing and development",
-                    "label": "Http local port. (default=autoselect)",
-                    "default": ""
-                },
-                {
                     "name": "OLS_VERSION",
                     "label": "Openlitespeed docker image version (1.7.11-lsphp73, 1.8.1-lsphp74, 1.8.1-lsphp80, 1.8.2-lsphp81, 1.8.2-lsphp82, 1.8.2-lsphp83)",
                     "default": "1.8.1-lsphp82"
@@ -293,7 +269,7 @@
                     "name": "COMPOSE_PROFILES",
                     "description": "Which services to enable: dev=development (gulp), db=database",
                     "label": "Profile list",
-                    "default": ""
+                    "default": "-"
                 }
             ]
         }
