@@ -1,7 +1,7 @@
 #!/bin/bash
 useradd -u 1000 www
 
-if [ "$CRONTAB" != "" ]; then
+if [ "$CRONTAB" != "" ] && [ "$CRONTAB" != " " ]; then
 
     echo "$CRONTAB" >/var/spool/cron/crontabs/www
     chown www:crontab /var/spool/cron/crontabs/www
