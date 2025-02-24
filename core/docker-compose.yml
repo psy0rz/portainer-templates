@@ -119,15 +119,18 @@ services:
       - traefik.http.routers.https-catchall.priority=-1
 
 
-
-
-
     stop_grace_period: 0s
 
 
     networks:
       - proxynet
       - default
+
+  templates:
+    image: nginx:alpine
+    volumes:
+      - ..:/usr/share/nginx/html/
+
 
 networks:
   proxynet:

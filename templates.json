@@ -1,8 +1,9 @@
 {
-    "version": "2",
+    "version": "3",
     "templates": [
         {
             "type": 3,
+            "id":1,
             "title": "Grav CMS vanilla",
             "description": "Default official Grav CMS image",
             "platform": "linux",
@@ -33,6 +34,7 @@
         },
         {
             "type": 3,
+            "id":2,
             "title": "Wordpress vanilla",
             "description": "Default official wordpress image",
             "platform": "linux",
@@ -76,6 +78,7 @@
         },
         {
             "type": 3,
+            "id":3,
             "title": "Wordpress litespeed",
             "description": "Openlitespeed server, for Wordpress",
             "note": "<h1>You'll have to unpack and install wordpress yourself.</h1> <h1>Do not forget to install redis and litespeed plugins. See stack editor for more info. </h1>",
@@ -130,6 +133,7 @@
         },
         {
             "type": 3,
+            "id":4,
             "title": "Magento 2",
             "description": "Magento 2 server, official images",
             "note": "",
@@ -223,6 +227,7 @@
         },
         {
             "type": 3,
+            "id":5,
             "title": "Shared MariaDB",
             "description": "Shared via dbnet",
             "note": "",
@@ -251,6 +256,7 @@
         },
         {
             "type": 3,
+            "id":6,
             "title": "Symfony litespeed",
             "description": "Openlitespeed server, for Symfony",
             "note": "<h1>You'll have to unpack and install symfony yourself.</h1>",
