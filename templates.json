@@ -66,7 +66,7 @@
                     "name": "COMPOSE_PROFILES",
                     "description": "Which services to enable: dev=development (gulp), db=database",
                     "label": "Profile list",
-                    "default": ""
+                    "default": " "
                 }
             ]
         },
@@ -89,24 +89,6 @@
                     "default": "Host(`example.com`) || Host(`www.example.com`)"
                 },
                 {
-                    "name": "MYSQL_PORT",
-                    "description": "Local MySql port for management (connect via ssh to localhost on this port with your sql manager)",
-                    "label": "MySql local port. (default=autoselect)",
-                    "default": ""
-                },
-                {
-                    "name": "HTTP_PORT",
-                    "description": "Local webserver port for testing and development",
-                    "label": "Http local port. (default=autoselect)",
-                    "default": ""
-                },
-                {
-                    "name": "GULP_PORT",
-                    "description": "Local gulp development port",
-                    "label": "Gulp local port, only when dev profile is enabled. (default=autoselect)",
-                    "default": ""
-                },
-                {
                     "name": "OLS_VERSION",
                     "label": "Openlitespeed docker image version (1.7.11-lsphp73, 1.8.1-lsphp74, 1.8.1-lsphp80, 1.8.2-lsphp81, 1.8.2-lsphp82, 1.8.2-lsphp83)",
                     "default": "1.8.1-lsphp82"
@@ -115,13 +97,13 @@
                     "name": "COMPOSE_PROFILES",
                     "description": "Which services to enable: dev=development (gulp), db=database",
                     "label": "Profile list",
-                    "default": ""
+                    "default": " "
                 },
                 {
                     "name": "CRONTAB",
                     "description": "e.g.: '* * * * * curl google.com'",
                     "label": "Crontab",
-                    "default": ""
+                    "default": " "
                 }
             ]
         },
@@ -269,7 +251,7 @@
                     "name": "COMPOSE_PROFILES",
                     "description": "Which services to enable: dev=development (gulp), db=database",
                     "label": "Profile list",
-                    "default": "-"
+                    "default": " "
                 }
             ]
         }
