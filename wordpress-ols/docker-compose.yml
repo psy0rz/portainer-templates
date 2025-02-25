@@ -62,7 +62,12 @@ services:
       - wordpress:/var/www/vhosts/localhost/html
       # see https://github.com/litespeedtech/ols-docker-env/issues/77
       - logs:/usr/local/lsws/logs/
+      - /root/portainer-templates/wordpress-ols/zzz-custom-php.ini:/usr/local/lsws/lsphp73/etc/php/7.3/mods-available/zzz-custom-php.ini:ro
+      - /root/portainer-templates/wordpress-ols/zzz-custom-php.ini:/usr/local/lsws/lsphp74/etc/php/7.4/mods-available/zzz-custom-php.ini:ro
+      - /root/portainer-templates/wordpress-ols/zzz-custom-php.ini:/usr/local/lsws/lsphp80/etc/php/8.0/mods-available/zzz-custom-php.ini:ro
+      - /root/portainer-templates/wordpress-ols/zzz-custom-php.ini:/usr/local/lsws/lsphp81/etc/php/8.1/mods-available/zzz-custom-php.ini:ro
       - /root/portainer-templates/wordpress-ols/zzz-custom-php.ini:/usr/local/lsws/lsphp82/etc/php/8.2/mods-available/zzz-custom-php.ini:ro
+      - /root/portainer-templates/wordpress-ols/zzz-custom-php.ini:/usr/local/lsws/lsphp83/etc/php/8.3/mods-available/zzz-custom-php.ini:ro
       - /root/portainer-templates/wordpress-ols/conf:/usr/local/lsws/conf:ro
       - /root/portainer-templates/wordpress-ols/entrypoint.sh:/entrypoint.sh:ro
 
