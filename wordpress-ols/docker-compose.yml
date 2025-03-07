@@ -117,6 +117,10 @@ services:
       - 127.0.0.1:${GULP_PORT}:3001
     stop_grace_period: 0s
     restart: no
+    deploy:
+    resources:
+      limits:
+        memory: 4G
 
 networks:
   proxynet:
