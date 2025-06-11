@@ -57,14 +57,8 @@
                     "default": ""
                 },
                 {
-                    "name": "GULP_PORT",
-                    "description": "Local gulp development port",
-                    "label": "Gulp local port, only when dev profile is enabled. (default=autoselect)",
-                    "default": ""
-                },
-                {
                     "name": "COMPOSE_PROFILES",
-                    "description": "Which services to enable: dev=development (gulp), db=database",
+                    "description": "Which services to enable:  db=database",
                     "label": "Profile list",
                     "default": " "
                 }
@@ -95,7 +89,7 @@
                 },
                 {
                     "name": "COMPOSE_PROFILES",
-                    "description": "Which services to enable: dev=development (gulp), db=database",
+                    "description": "Which services to enable:  db=database",
                     "label": "Profile list",
                     "default": " "
                 },
@@ -249,7 +243,7 @@
                 },
                 {
                     "name": "COMPOSE_PROFILES",
-                    "description": "Which services to enable: dev=development (gulp), db=database",
+                    "description": "Which services to enable: db=database",
                     "label": "Profile list",
                     "default": " "
                 }

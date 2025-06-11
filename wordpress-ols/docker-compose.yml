@@ -106,21 +106,21 @@ services:
     restart: unless-stopped
     stop_grace_period: 0s
 
-
-  gulp:
-    build: ./build/gulp
-    profiles:
-      - dev
-    volumes:
-      - wordpress:/repo
-    ports:
-      - 127.0.0.1:${GULP_PORT}:3001
-    stop_grace_period: 0s
-    restart: no
-    deploy:
-      resources:
-        limits:
-          memory: 4G
+  # Its easier to do this via script that create a temp container:
+  # gulp:
+  #   build: ./build/gulp
+  #   profiles:
+  #     - dev
+  #   volumes:
+  #     - wordpress:/repo
+  #   ports:
+  #     - 127.0.0.1:${GULP_PORT}:3001
+  #   stop_grace_period: 0s
+  #   restart: no
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         memory: 4G
 
 networks:
   proxynet:
