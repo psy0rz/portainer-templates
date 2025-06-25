@@ -105,7 +105,11 @@ services:
     environment:
       - CRONTAB=* * * * * www PHP_MEMORY_LIMIT=2G /usr/local/bin/php /app/bin/magento cron:run &>/dev/null
     command: cron -f
-
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          
     stop_grace_period: 0s
     depends_on:
       opensearch:
