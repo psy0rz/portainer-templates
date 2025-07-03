@@ -155,32 +155,32 @@
                 {
                     "name": "MARIADB_VERSION",
                     "label": "Mariadb version",
-                    "default": "10.6"
+                    "default": "11.4"
                 },
                 {
                     "name": "VARNISH_VERSION",
                     "label": "Varnish version",
-                    "default": "7.1.1-1.4.0"
+                    "default": "7.1.1-1.4.3"
                 },
                 {
                     "name": "NGINX_VERSION",
                     "label": "Nginx version",
-                    "default": "1.24-1.4.0"
+                    "default": "1.24-1.4.3"
                 },
                 {
                     "name": "OPENSEARCH_VERSION",
                     "label": "Opensearch version",
-                    "default": "2.12-1.4.0"
+                    "default": "2.4-1.4.3"
                 },
                 {
                     "name": "FPM_VERSION",
                     "label": "Php version",
-                    "default": "8.3-fpm-1.4.0"
+                    "default": "8.4-fpm-1.4.3"
                 },
                 {
                     "name": "CLI_VERSION",
                     "label": "Cli version",
-                    "default": "8.3-cli-1.4.0"
+                    "default": "8.4-cli-1.4.3"
                 },
                 {
                     "name": "MAGENTO_RUN_MODE",
