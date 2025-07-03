@@ -126,21 +126,9 @@
                     "default": "example.somedomain"
                 },
                 {
-                    "name": "MYSQL_PORT",
-                    "description": "Local MySql port for management (connect via ssh to localhost on this port with your sql manager)",
-                    "label": "MySql local port. (default=autoselect)",
-                    "default": ""
-                },
-                {
                     "name": "MYSQL_ROOT_PASSWORD",
                     "label": "Mysql root password",
                     "default": "insecure!!"
-                },
-                {
-                    "name": "HTTP_PORT",
-                    "description": "Local webserver port for testing and development",
-                    "label": "Http local port. (default=autoselect)",
-                    "default": ""
                 },
                 {
                     "name": "SSH_PORT",
