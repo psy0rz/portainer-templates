@@ -128,7 +128,7 @@
                 {
                     "name": "MYSQL_ROOT_PASSWORD",
                     "label": "Mysql root password",
-                    "default": "insecure!!"
+                    "default": ""
                 },
                 {
                     "name": "SSH_PORT",
