@@ -53,7 +53,7 @@
                 {
                     "name": "VERSION",
                     "label": "PHP version (php7.3, php7.4, php7.6, php8.0, php8.1, php8.2, php8.3, php8.4, latest)",
-                    "default": "1.8.1-lsphp82"
+                    "default": "php8.4"
                 }
             ]
         },
@@ -78,7 +78,7 @@
                 {
                     "name": "OLS_VERSION",
                     "label": "Openlitespeed docker image version (1.7.11-lsphp73, 1.8.1-lsphp74, 1.8.1-lsphp80, 1.8.3lsphp81, 1.8.3-lsphp82, 1.8.3-lsphp83, 1.8.3-lsphp84, latest)",
-                    "default": "1.8.1-lsphp82"
+                    "default": "1.8.3-lsphp84"
                 },
                 {
                     "name": "COMPOSE_PROFILES",
