@@ -3,7 +3,7 @@
     "templates": [
         {
             "type": 3,
-            "id":1,
+            "id": 1,
             "title": "Grav CMS vanilla",
             "description": "Default official Grav CMS image",
             "platform": "linux",
@@ -24,11 +24,11 @@
                     "label": "Postfix hostname",
                     "default": "example.somedomain"
                 }
-                        ]
+            ]
         },
         {
             "type": 3,
-            "id":2,
+            "id": 2,
             "title": "Wordpress vanilla",
             "description": "Default official wordpress image",
             "platform": "linux",
@@ -45,28 +45,21 @@
                     "default": "Host(`example.com`) || Host(`www.example.com`)"
                 },
                 {
-                    "name": "MYSQL_PORT",
-                    "description": "Local MySql port for management (connect via ssh to localhost on this port with your sql manager)",
-                    "label": "MySql local port. (default=autoselect)",
-                    "default": ""
-                },
-                {
-                    "name": "HTTP_PORT",
-                    "description": "Local webserver port for testing and development",
-                    "label": "Http local port. (default=autoselect)",
-                    "default": ""
-                },
-                {
                     "name": "COMPOSE_PROFILES",
                     "description": "Which services to enable:  db=database",
                     "label": "Profile list",
                     "default": " "
+                },
+                {
+                    "name": "VERSION",
+                    "label": "PHP version (php7.3, php7.4, php7.6, php8.0, php8.1, php8.2, php8.3, php8.4, latest)",
+                    "default": "1.8.1-lsphp82"
                 }
             ]
         },
         {
             "type": 3,
-            "id":3,
+            "id": 3,
             "title": "Wordpress litespeed",
             "description": "Openlitespeed server, for Wordpress",
             "note": "<h1>You'll have to unpack and install wordpress yourself.</h1> <h1>Do not forget to install redis and litespeed plugins. See stack editor for more info. </h1>",
@@ -84,7 +77,7 @@
                 },
                 {
                     "name": "OLS_VERSION",
-                    "label": "Openlitespeed docker image version (1.7.11-lsphp73, 1.8.1-lsphp74, 1.8.1-lsphp80, 1.8.2-lsphp81, 1.8.2-lsphp82, 1.8.2-lsphp83)",
+                    "label": "Openlitespeed docker image version (1.7.11-lsphp73, 1.8.1-lsphp74, 1.8.1-lsphp80, 1.8.3lsphp81, 1.8.3-lsphp82, 1.8.3-lsphp83, 1.8.3-lsphp84, latest)",
                     "default": "1.8.1-lsphp82"
                 },
                 {
@@ -103,7 +96,7 @@
         },
         {
             "type": 3,
-            "id":4,
+            "id": 4,
             "title": "Magento 2",
             "description": "Magento 2 server, official images",
             "note": "",
@@ -185,7 +178,7 @@
         },
         {
             "type": 3,
-            "id":5,
+            "id": 5,
             "title": "Shared MariaDB",
             "description": "Shared via dbnet",
             "note": "",
@@ -208,7 +201,7 @@
         },
         {
             "type": 3,
-            "id":6,
+            "id": 6,
             "title": "Symfony litespeed",
             "description": "Openlitespeed server, for Symfony",
             "note": "<h1>You'll have to unpack and install symfony yourself.</h1>",
