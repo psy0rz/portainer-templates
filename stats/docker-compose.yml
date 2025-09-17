@@ -1,0 +1,49 @@
+# Vanilla GRAV cms
+---
+version: "2.1"
+services:
+  grafana:
+    
+    image: grafana/grafana-oss:latest
+    volumes:
+      - grafana:/var/lib/grafana
+    restart: unless-stopped
+    
+    labels:
+      - traefik.enable=true
+      
+      #https
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.entrypoints=websecure
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.rule=${TRAEFIK_RULE}
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls.certresolver=myzerossl 
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls=true
+
+
+    networks:
+      - proxynet
+      - default
+
+
+
+  vm:
+    
+    image: victoriametrics/victoria-metrics:latest
+    restart: unless-stopped
+    volumes:
+      - vm:/victoria-metrics-data
+      - ./scrape.yaml:/etc/victoria-metrics/scrape.yaml:ro
+    command:
+      - '-promscrape.config=/etc/victoria-metrics/scrape.yaml'
+
+
+
+networks:
+  proxynet:
+    name: proxynet
+
+
+volumes:
+  grafana:
+    driver: zfs
+  vm:
+    driver: zfs

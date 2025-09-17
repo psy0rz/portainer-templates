@@ -22,6 +22,8 @@ services:
       - "--providers.docker.network=proxynet"
       - "--providers.docker.defaultRule="
       - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.letsencrypt.acme.email=${ZEROSSL_EMAIL}"
+      - "--certificatesresolvers.letsencrypt.acme.httpChallenge.entryPoint=web"
       - "--certificatesresolvers.myzerossl.acme.email=${ZEROSSL_EMAIL}"
       - "--certificatesresolvers.myzerossl.acme.storage=/storage/acme.json"
       - "--certificatesresolvers.myzerossl.acme.caserver=${ZEROSSL_CASERVER}"
@@ -68,6 +70,10 @@ services:
       - traefik.http.routers.http-catchall.priority=-1
       - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
 
+      # Router specifically for xmlrpc.php to block it globally (wordpress)
+      - traefik.http.routers.xmlrpc.rule=PathPrefix(`/xmlrpc.php`)
+      - traefik.http.routers.xmlrpc.priority=1000
+      - traefik.http.routers.xmlrpc.tls=true
 
 
     stop_grace_period: 0s
