@@ -138,8 +138,8 @@ networks:
 
 volumes:
  traefik:
-#    driver: zfs
+   driver: zfs
  portainer:
-#    driver: zfs
+   driver: zfs
 
 
