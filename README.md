@@ -15,7 +15,7 @@ Traefik is configured to use ZeroSSL to get free SSL certificates. It uses porta
 # Start the core stack
 
 * Go to the core directory
-* Edit the .env file (You need a ZeroSSL account)
+* Copy .env-example to .env and edit it (You need a ZeroSSL account)
 * docker compose up -d
 
 # Open portainer
