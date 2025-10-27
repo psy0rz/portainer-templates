@@ -40,8 +40,12 @@ services:
 
       # - "--experimental.otlpLogs=true"
       # - "--accesslog.otlp.grpc=true"
-      # - "--accesslog.otlp.grpc.endpoint=stats.server.bla:4317"
+      # - "--accesslog.otlp.grpc.endpoint=stats-vl-1:4317"
       # - "--accesslog.otlp.grpc.insecure=true"
+
+      - "--experimental.otlpLogs=true"
+      - "--accesslog.otlp.http=true"
+      - "--accesslog.otlp.http.endpoint=http://vl:9428/insert/opentelemetry/v1/logs"
 
 
       # - "--tracing=true"

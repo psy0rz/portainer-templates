@@ -34,6 +34,20 @@ services:
       - ./scrape.yaml:/etc/victoria-metrics/scrape.yaml:ro
     command:
       - '-promscrape.config=/etc/victoria-metrics/scrape.yaml'
+    ports:
+      - "127.0.0.1:8428:8428"  # VictoriaMetrics HTTP API
+
+  vl:
+    
+    image: victoriametrics/victoria-logs:latest
+    restart: unless-stopped
+    volumes:
+      - vl:/victoria-logs-data
+    ports:
+      - "127.0.0.1:9428:9428"  # VictoriaMetrics HTTP API
+    networks:
+      - proxynet
+      - default
 
 
 
@@ -46,4 +60,6 @@ volumes:
   grafana:
     driver: zfs
   vm:
+    driver: zfs
+  vl:
     driver: zfs
