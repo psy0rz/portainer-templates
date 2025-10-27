@@ -1,3 +1,6 @@
 .vscode
 .env
+.lock
+.ansible
+.DS_Store
 
