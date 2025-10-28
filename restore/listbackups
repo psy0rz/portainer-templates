@@ -1,0 +1,3 @@
+#!/bin/bash
+
+zfs list -r -t snapshot $1

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+DATASET=$1
+SNAP=$1@backup-`date +%Y%m%d%H%M%S`
+set -e
+zfs snapshot $SNAP
+
+echo "Backup gemaakt naar $SNAP"
