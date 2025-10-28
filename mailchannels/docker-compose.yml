@@ -1,31 +1,28 @@
 # Mailchannels relay
 
-version: '3.1'
 services:
 
   mail:
     hostname: mail
     image: mwader/postfix-relay
 
-    # relayhost = smtp.mailchannels.net
-    # smtp_sasl_auth_enable = yes
-    # smtp_sasl_password_maps = hash:/etc/postfix/password
-    # smtp_sasl_security_options = noanonymous
-    # smtpd_sasl_authenticated_header = yes
-    # smtp_tls_security_level = encrypt
     environment: 
 
       - POSTFIX_myhostname=${POSTFIX_HOSTNAME}
       - POSTFIX_relayhost=smtp.mailchannels.net
       - POSTFIX_smtp_sasl_auth_enable=yes
       - POSTFIX_smtp_sasl_password_maps=static:${MAILCHANNELS_USER}:${MAILCHANNELS_PASSWORD}
+
       - POSTFIX_smtp_sasl_security_options=noanonymous
       - POSTFIX_smtpd_sasl_authenticated_header=yes
       - POSTFIX_smtp_tls_security_level=encrypt
+      - POSTFIX_header_checks=regexp:/etc/postfix/header_checks
+      - "POSTMAP_header_checks=/^From:\\s*(.+)$/    PREPEND X-AuthUser: $1"
+      # - POSTFIX_debug_peer_level=1000
+      # - POSTFIX_debug_peer_list=smtp.mailchannels.net
 
 
     restart: unless-stopped
-    stop_grace_period: 0s
     networks:
       - proxynet
       - default
@@ -40,3 +37,4 @@ networks:
 #     driver: zfs
 #   db:
 #     driver: zfs
+
