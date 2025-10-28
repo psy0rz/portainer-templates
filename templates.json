@@ -229,6 +229,35 @@
                     "default": " "
                 }
             ]
+        },
+        {
+            "type": 3,
+            "id": 7,
+            "title": "Mailchannels relay",
+            "description": "Receives mail via proxynet smtp (no auth), and relays it to mailchannels",
+            "platform": "linux",
+            "repository": {
+                "url": "https://github.com/psy0rz/portainer-templates",
+                "stackfile": "mailchannels/docker-compose.yml"
+            },
+            "env": [
+                {
+                    "name": "POSTFIX_HOSTNAME",
+                    "description": "Hostname of this host server",
+                    "label": "Postfix hostname (helo)",
+                    "default": "mail.example.com"
+                },
+                {
+                    "name": "MAILCHANNELS_USER",
+                    "label": "Username",
+                    "default": ""
+                },
+                {
+                    "name": "MAILCHANNELS_PASSWORD",
+                    "label": "Password",
+                    "default": " "
+                }
+            ]
         }
     ]
 }
