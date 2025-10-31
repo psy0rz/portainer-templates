@@ -1,0 +1,46 @@
+
+#NOTE: dont forget to chown storage and cf volumes to www user 1000
+services:
+  mikopbx:
+    # container_name: "mikopbx"
+    image: "mikopbx/mikopbx"
+    # network_mode: "host"
+    # cap_add:
+    #   - NET_ADMIN
+    # entrypoint: "/sbin/docker-entrypoint"
+    volumes:
+      - cf:/cf
+      - storage:/storage
+    tty: true
+    ports:
+      - 5060:5060/udp
+      - 10000:10050/udp
+    #https://docs.mikopbx.com/mikopbx/english/setup/docker/running-mikopbx-in-container
+    environment:
+      - ID_WWW_USER=1000
+      - ID_WWW_GROUP=1000
+      - RTP_PORT_FROM=10000
+      - RTP_PORT_TO=10050
+
+    labels:
+      - traefik.enable=true
+      
+      #https
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.entrypoints=websecure
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.rule=${TRAEFIK_RULE}
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls.certresolver=myzerossl 
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls=true
+    networks:
+      - proxynet
+      - default
+
+volumes:
+  cf:
+    driver: zfs
+  storage:
+    driver: zfs
+  
+
+networks:
+  proxynet:
+    name: proxynet
