@@ -1,5 +1,5 @@
 
-#NOTE: dont forget to chown storage and cf volumes to www user 1000
+#NOTE: dont forget to chown storage and cf volumes to www user 1011
 services:
   mikopbx:
     # container_name: "mikopbx"
@@ -17,8 +17,7 @@ services:
       - 10000:10050/udp
     #https://docs.mikopbx.com/mikopbx/english/setup/docker/running-mikopbx-in-container
     environment:
-      - ID_WWW_USER=1000
-      - ID_WWW_GROUP=1000
+
       - RTP_PORT_FROM=10000
       - RTP_PORT_TO=10050
 

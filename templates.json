@@ -264,7 +264,7 @@
             "id": 8,
             "title": "MikoPBX",
             "description": "MikoPBX Asterisk based PBX system",
-            "note": "<h1>Ddont forget to chown storage and cf volumes to www user 1000</h1>",
+            "note": "<h1>Ddont forget to chown storage and cf volumes to www user 1011</h1>",
             "platform": "linux",
             "repository": {
                 "url": "https://github.com/psy0rz/portainer-templates",
