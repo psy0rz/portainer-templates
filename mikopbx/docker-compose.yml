@@ -30,6 +30,7 @@ services:
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.rule=${TRAEFIK_RULE}
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls.certresolver=myzerossl 
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls=true
+      - traefik.http.services.${COMPOSE_PROJECT_NAME}-https.loadbalancer.server.port=80
     networks:
       - proxynet
       - default
