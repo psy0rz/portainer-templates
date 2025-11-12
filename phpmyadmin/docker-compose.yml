@@ -1,5 +1,5 @@
-#NOTE: always places itself in /phpmyadmin via traefik, so you put it over an existing domain.
-#You can override DB_HOST and PREFIX via environment variables.
+#NOTE: since its behind a prefix, you can put it over an existing domain.
+#Usually we have a globa database (db1) in dbnet, that many services connect to.
 
 services:
   phpmyadmin:
