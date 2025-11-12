@@ -283,7 +283,7 @@
             "type": 3,
             "id": 9,
             "title": "PHPMyAdmin",
-            "description": "PHPMyadmin behind url prefix.",
+            "description": "PHPMyadmin behind url prefix, in dbnet",
             "platform": "linux",
             "repository": {
                 "url": "https://github.com/psy0rz/portainer-templates",
