@@ -1,0 +1,40 @@
+#NOTE: always places itself in /phpmyadmin via traefik, so you put it over an existing domain.
+#You can override DB_HOST and PREFIX via environment variables.
+
+services:
+  phpmyadmin:
+    
+    image: phpmyadmin/phpmyadmin:latest
+
+    restart: unless-stopped
+    stop_grace_period: 0s
+
+    environment:
+      PMA_HOST: ${DB_HOST}
+      PMA_ABSOLUTE_URI: ${PREFIX}
+ 
+    labels:
+      - traefik.enable=true
+      
+      #https
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.entrypoints=websecure
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.rule=PathPrefix(`${PREFIX}`) && ${TRAEFIK_RULE}
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls.certresolver=myzerossl 
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls=true
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.middlewares=${COMPOSE_PROJECT_NAME}-strip
+      - traefik.http.middlewares.${COMPOSE_PROJECT_NAME}-strip.stripprefix.prefixes=${PREFIX}
+
+    networks:
+      - proxynet
+      - dbnet
+      - default
+
+
+
+
+networks:
+  proxynet:
+    name: proxynet
+  dbnet:
+    name: dbnet
+

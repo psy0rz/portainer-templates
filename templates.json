@@ -278,6 +278,38 @@
                     "default": "Host(`example.com`) || Host(`www.example.com`)"
                 }
            ]
+        },
+        {
+            "type": 3,
+            "id": 9,
+            "title": "PHPMyAdmin",
+            "description": "PHPMyadmin behind url prefix.",
+            "platform": "linux",
+            "repository": {
+                "url": "https://github.com/psy0rz/portainer-templates",
+                "stackfile": "phpmyadmin/docker-compose.yml"
+            },
+            "env": [
+                {
+                    "name": "TRAEFIK_RULE",
+                    "description": "Traefik rule (https://doc.traefik.io/traefik/v3.0/routing/routers/#rule)",
+                    "label": "Traefik rule",
+                    "default": "Host(`example.com`) || Host(`www.example.com`)"
+                },
+                {
+                    "name": "DB_HOST",
+                    "description": "Database host to connect to (default=db1)",
+                    "label": "Database host",
+                    "default": "db1"
+                },
+                {
+                    "name": "PREFIX",
+                    "description": "URL prefix to access phpmyadmin (default=/phpmyadmin)",
+                    "label": "URL Prefix",
+                    "default": "/phpmyadmin"
+                }
+           ]
         }
+
     ]
 }
