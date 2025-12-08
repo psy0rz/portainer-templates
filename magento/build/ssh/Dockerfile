@@ -7,7 +7,7 @@ EXPOSE 22
 COPY ssh-run.sh /ssh-run.sh
 
 RUN apt-get update && apt-get install -y openssh-server less mc rsync && \
-mkdir /run/sshd && \
+mkdir -p /run/sshd && \
 sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config && \
 sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config && \
 chmod +x /ssh-run.sh

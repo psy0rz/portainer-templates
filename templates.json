@@ -141,27 +141,27 @@
                 {
                     "name": "VARNISH_VERSION",
                     "label": "Varnish version",
-                    "default": "7.1.1-1.4.3"
+                    "default": "7.1.1-1.4.6"
                 },
                 {
                     "name": "NGINX_VERSION",
                     "label": "Nginx version",
-                    "default": "1.24-1.4.3"
+                    "default": "1.24-1.4.6"
                 },
                 {
                     "name": "OPENSEARCH_VERSION",
                     "label": "Opensearch version",
-                    "default": "2.4-1.4.3"
+                    "default": "2.4-1.4.6"
                 },
                 {
                     "name": "FPM_VERSION",
                     "label": "Php version",
-                    "default": "8.4-fpm-1.4.3"
+                    "default": "8.4-fpm-1.4.6"
                 },
                 {
                     "name": "CLI_VERSION",
                     "label": "Cli version",
-                    "default": "8.4-cli-1.4.3"
+                    "default": "8.4-cli-1.4.6"
                 },
                 {
                     "name": "MAGENTO_RUN_MODE",
