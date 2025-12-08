@@ -34,6 +34,7 @@ services:
     networks:
       - proxynet
       - default
+    restart: unless-stopped
 
 volumes:
   cf:
