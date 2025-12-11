@@ -12,6 +12,7 @@ services:
     environment:
       PMA_HOST: ${DB_HOST}
       PMA_ABSOLUTE_URI: ${PREFIX}
+      UPLOAD_LIMIT: 1024M
  
     labels:
       - traefik.enable=true
