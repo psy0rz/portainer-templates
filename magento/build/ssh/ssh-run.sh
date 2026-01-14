@@ -14,7 +14,7 @@ ssh-keygen -A
 cp /etc/ssh/ssh_host_* $HOME/.ssh
 
 #sql stuff
-echo -e '[client]\nuser=magento\npassword=magento\nhost=db\ndatabase=magento\n' >$HOME/.my.cnf
+echo -e '[client]\nuser=magento\npassword=magento\nhost=db\ndatabase=magento\nskip-ssl\n' >$HOME/.my.cnf
 
 chown $USER $HOME
 chown -R $USER $HOME/.ssh
