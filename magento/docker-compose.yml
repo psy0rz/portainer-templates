@@ -169,6 +169,32 @@ services:
     restart: unless-stopped
     stop_grace_period: 0s
 
+#use existing mailserver:
+  # smtp:
+  #   hostname: www.mysite.com
+
+  #   networks:
+  #    - proxynet
+  #    - default
+
+  #   image: loganmarchione/docker-postfixrelay:latest
+  #   restart: unless-stopped
+  #   environment:
+  #     - TZ=Europe/Amsterdam
+  #     - RELAY_HOST=mailserver.com
+  #     - RELAY_PORT=587
+  #     - RELAY_USER=user@domain.com
+  #     - RELAY_PASS=1234
+  #     - RELAY_SUBMISSIONS=false
+  #     - TEST_EMAIL=somemail@gmail.com
+  #     - MYORIGIN=mysite.com
+  #     - FROMADDRESS=shop@mysite.com
+  #     - MYNETWORKS=0.0.0.0/0
+  #     - MSG_SIZE=30720000
+  #     - LOG_DISABLE=false
+  #   volumes: 
+  #     - mailqueue:/var/spool/postfix
+
 
   ssh:
     hostname: ${COMPOSE_PROJECT_NAME}
