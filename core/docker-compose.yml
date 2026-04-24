@@ -45,11 +45,6 @@ services:
       # - "--accesslog.otlp.grpc.endpoint=stats-vl-1:4317"
       # - "--accesslog.otlp.grpc.insecure=true"
 
-      - "--experimental.otlpLogs=true"
-      - "--accesslog.otlp.http=true"
-      - "--accesslog.otlp.http.endpoint=http://vl:9428/insert/opentelemetry/v1/logs"
-
-
       # - "--tracing=true"
       # - "--tracing.otlp.grpc=true"
       # - "--tracing.addInternals=true"
@@ -57,6 +52,10 @@ services:
       # - "--tracing.otlp.grpc.endpoint=stats.server.bla:4317"
       # - "--tracing.otlp.grpc.insecure=true"
 
+      - "--experimental.otlpLogs=true"
+      - "--accesslog.otlp.http=${OTLP}"
+      - "--accesslog.otlp.http.endpoint=${OTLP_ENDPOINT}"
+      - "--accesslog.otlp.http.headers.Authorization=${OTLP_AUTH}" # echo -n user:pass|base64
 
 
 
@@ -68,10 +67,13 @@ services:
     volumes:
      - "/var/run/docker.sock:/var/run/docker.sock:ro"
      - traefik:/storage
+     - ./htpasswd:/etc/traefik/htpasswd:ro 
 
     networks:
       - proxynet
       - default
+
+    hostname: ${DOMAIN}      
 
     labels:
       # Traefik status page
@@ -99,6 +101,11 @@ services:
       - traefik.http.routers.xmlrpc.priority=1000
       - traefik.http.routers.xmlrpc.tls=true
 
+      # Generic auth used to protect some webinterfaces
+      # Use:       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.middlewares=auth
+      - "traefik.http.middlewares.auth.basicauth.usersFile=/etc/traefik/htpasswd"
+
+
 
     stop_grace_period: 0s
 
@@ -123,7 +130,7 @@ services:
 
   watchtower:
     restart: unless-stopped
-    image: containrrr/watchtower
+    image: nickfedor/watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
