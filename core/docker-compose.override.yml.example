@@ -1,0 +1,15 @@
+services:
+  traefik:
+    ports: !override
+      - "80:80"
+      # seperate IP's for normal operation and landing page for domain name reservations
+      - "1.1.1.1:443:443"
+      - "2.2.2.2:443:1443"
+
+
+# for the container with the landing page configure this:
+#   #landing page for everything http on special ip
+# - traefik.http.routers.${COMPOSE_PROJECT_NAME}-http.entrypoints=landing
+# - traefik.http.routers.${COMPOSE_PROJECT_NAME}-http.rule=HostRegexp(`.*`)
+# - traefik.http.services.${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=80
+# - traefik.http.routers.${COMPOSE_PROJECT_NAME}-http.service=${COMPOSE_PROJECT_NAME}

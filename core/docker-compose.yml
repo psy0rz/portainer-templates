@@ -6,11 +6,10 @@
 
 # Treafik dashboard is on https://host/treafik/dashboard
 
-version: "3.3"
 
 services:
   traefik:
-    image: "traefik:latest"
+    image: "traefik:v3.6"
     restart: unless-stopped
 
     command:
@@ -22,6 +21,7 @@ services:
       - "--entryPoints.web.http.encodedCharacters.allowEncodedSlash=true"
       - "--entryPoints.websecure.address=:443"
       - "--entryPoints.websecure.http.encodedCharacters.allowEncodedSlash=true"
+      - "--entryPoints.landing.address=:81"
       - "--providers.docker.network=proxynet"
       - "--providers.docker.defaultRule="
       - "--certificatesresolvers.letsencrypt.acme.email=${ZEROSSL_EMAIL}"
@@ -56,13 +56,13 @@ services:
       - "--accesslog.otlp.http=${OTLP}"
       - "--accesslog.otlp.http.endpoint=${OTLP_ENDPOINT}"
       - "--accesslog.otlp.http.headers.Authorization=${OTLP_AUTH}" # echo -n user:pass|base64
+      - "--accesslog.fields.headers.defaultMode=keep"
 
-
-
-
+    #NOTE: use docker-compose.override.yml to make a seperate ip as landing page for reserved domains (see docker-compose.override.yml.example)
     ports:
       - "80:80"
       - "443:443"
+    
 
     volumes:
      - "/var/run/docker.sock:/var/run/docker.sock:ro"
@@ -133,7 +133,7 @@ services:
     image: nickfedor/watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-
+    command: --rolling-restart --schedule "0 0 4 * * *"
 
   maintenance:
     image: wickerlabs/maintenance
