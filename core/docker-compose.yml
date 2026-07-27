@@ -52,11 +52,18 @@ services:
       # - "--tracing.otlp.grpc.endpoint=stats.server.bla:4317"
       # - "--tracing.otlp.grpc.insecure=true"
 
+      # victoria metrics logging
       - "--experimental.otlpLogs=true"
       - "--accesslog.otlp.http=${OTLP}"
       - "--accesslog.otlp.http.endpoint=${OTLP_ENDPOINT}"
       - "--accesslog.otlp.http.headers.Authorization=${OTLP_AUTH}" # echo -n user:pass|base64
       - "--accesslog.fields.headers.defaultMode=keep"
+
+      # custom certs
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.file.filename=/etc/traefik/certs.yml
+      - --providers.file.watch=true
 
     #NOTE: use docker-compose.override.yml to make a seperate ip as landing page for reserved domains (see docker-compose.override.yml.example)
     ports:
@@ -68,6 +75,8 @@ services:
      - "/var/run/docker.sock:/var/run/docker.sock:ro"
      - traefik:/storage
      - ./htpasswd:/etc/traefik/htpasswd:ro 
+     - ./certs.yml:/etc/traefik/certs.yml:ro
+     - ./certs:/certs:ro
 
     networks:
       - proxynet

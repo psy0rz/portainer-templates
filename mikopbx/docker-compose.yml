@@ -18,9 +18,11 @@ services:
 
     #https://docs.mikopbx.com/mikopbx/english/setup/docker/running-mikopbx-in-container
     environment:
-
+      - ID_WWW_USER=1000
+      - ID_WWW_GROUP=1000
       - RTP_PORT_FROM=10000
       - RTP_PORT_TO=10050
+      - ENABLE_USE_NAT=1
 
     labels:
       - traefik.enable=true
