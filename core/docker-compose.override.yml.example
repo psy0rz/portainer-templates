@@ -1,11 +1,11 @@
+#NOTE: landing pages cannot be https, since server doesnt know the domain so it cant get ssl. 
 services:
   traefik:
     ports: !override
-      - "80:80"
+      - "1.2.3.4:80:80"
+      - "5.6.7.8:80:81"
       # seperate IP's for normal operation and landing page for domain name reservations
-      - "1.1.1.1:443:443"
-      - "2.2.2.2:443:1443"
-
+      - "443:443"
 
 # for the container with the landing page configure this:
 #   #landing page for everything http on special ip
