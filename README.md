@@ -8,7 +8,7 @@ Traefik is configured to use ZeroSSL to get free SSL certificates. It uses porta
 
 # Requirements
 
-NOTE: [Alpinebox](https://https://github.com/psy0rz/alpinebox) has scripts that automaticly does all of this.
+NOTE: [Alpinebox](https://github.com/psy0rz/alpinebox) has scripts that automaticly does all of this.
 
 1. Get ZFS support for your /var/lib/docker mountpoint. 
 2. Install Docker and Docker compose cli.
