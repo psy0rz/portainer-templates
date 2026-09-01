@@ -27,6 +27,7 @@ services:
       - "--providers.docker.defaultRule="
       - "--certificatesresolvers.letsencrypt.acme.email=${LETSENCRYPT_EMAIL}"
       - "--certificatesresolvers.letsencrypt.acme.httpChallenge.entryPoint=web"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/storage/letsencrypt.json"
       - "--certificatesresolvers.myzerossl.acme.email=${ZEROSSL_EMAIL}"
       - "--certificatesresolvers.myzerossl.acme.storage=/storage/acme.json"
       - "--certificatesresolvers.myzerossl.acme.caserver=${ZEROSSL_CASERVER}"
@@ -54,11 +55,11 @@ services:
       # - "--tracing.otlp.grpc.insecure=true"
 
       # victoria metrics logging
-      - "--experimental.otlpLogs=true"
-      - "--accesslog.otlp.http=${OTLP}"
-      - "--accesslog.otlp.http.endpoint=${OTLP_ENDPOINT}"
-      - "--accesslog.otlp.http.headers.Authorization=${OTLP_AUTH}" # echo -n user:pass|base64
-      - "--accesslog.fields.headers.defaultMode=keep"
+      # - "--experimental.otlpLogs=true"
+      # - "--accesslog.otlp.http=${OTLP}"
+      # - "--accesslog.otlp.http.endpoint=${OTLP_ENDPOINT}"
+      # - "--accesslog.otlp.http.headers.Authorization=${OTLP_AUTH}" # echo -n user:pass|base64
+      # - "--accesslog.fields.headers.defaultMode=keep"
 
       # custom certs
       - --providers.docker=true
