@@ -19,7 +19,7 @@ services:
       #https
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-varnish.entrypoints=websecure
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-varnish.rule=${TRAEFIK_RULE}
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-varnish.tls.certresolver=myzerossl 
+      # - traefik.http.routers.${COMPOSE_PROJECT_NAME}-varnish.tls.certresolver=myzerossl 
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-varnish.tls=true
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-varnish.priority=2
       - traefik.http.services.${COMPOSE_PROJECT_NAME}-varnish.loadbalancer.server.port=80
@@ -55,7 +55,7 @@ services:
       #https
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.entrypoints=websecure
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.rule=${TRAEFIK_RULE}
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.tls.certresolver=myzerossl 
+      # - traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.tls.certresolver=myzerossl 
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.tls=true
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.priority=1
       - traefik.http.services.${COMPOSE_PROJECT_NAME}-web.loadbalancer.server.port=8080

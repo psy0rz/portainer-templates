@@ -21,10 +21,11 @@ services:
       - "--entryPoints.web.http.encodedCharacters.allowEncodedSlash=true"
       - "--entryPoints.websecure.address=:443"
       - "--entryPoints.websecure.http.encodedCharacters.allowEncodedSlash=true"
+      - "--entrypoints.websecure.http.tls.certresolver=${DEFAULT_ACME_PROVIDER}"
       - "--entryPoints.landing.address=:81"
       - "--providers.docker.network=proxynet"
       - "--providers.docker.defaultRule="
-      - "--certificatesresolvers.letsencrypt.acme.email=${ZEROSSL_EMAIL}"
+      - "--certificatesresolvers.letsencrypt.acme.email=${LETSENCRYPT_EMAIL}"
       - "--certificatesresolvers.letsencrypt.acme.httpChallenge.entryPoint=web"
       - "--certificatesresolvers.myzerossl.acme.email=${ZEROSSL_EMAIL}"
       - "--certificatesresolvers.myzerossl.acme.storage=/storage/acme.json"
@@ -96,7 +97,7 @@ services:
       - "traefik.http.routers.dashboard.entrypoints=websecure"
       - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
       - "traefik.http.routers.dashboard.service=dashboard"
-      - "traefik.http.routers.dashboard.tls.certresolver=myzerossl"
+      # - "traefik.http.routers.dashboard.tls.certresolver=myzerossl"
 
       # redirect all http to https
       - traefik.http.routers.http-catchall.rule=hostregexp(`.*`)
@@ -132,8 +133,7 @@ services:
       - "traefik.http.routers.portainer.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.portainer.entrypoints=websecure"
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
-      - "traefik.http.routers.portainer.service=portainer"
-      - "traefik.http.routers.portainer.tls.certresolver=myzerossl"
+      # - "traefik.http.routers.portainer.tls.certresolver=myzerossl"
 
     stop_grace_period: 0s
 
