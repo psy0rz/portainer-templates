@@ -316,6 +316,32 @@
                 }
            ]
         }
-
+,
+        {
+            "type": 3,
+            "id": 10,
+            "title": "Nextcloud",
+            "description": "Nextcloud - Open source content collaboration platform",
+            "note": "",
+            "platform": "linux",
+            "repository": {
+                "url": "https://github.com/psy0rz/portainer-templates",
+                "stackfile": "nextcloud/docker-compose.yml"
+            },
+            "env": [
+                {
+                    "name": "TRAEFIK_RULE",
+                    "description": "Traefik rule (https://doc.traefik.io/traefik/v3.0/routing/routers/#rule)",
+                    "label": "Traefik rule",
+                    "default": "Host(`example.com`) || Host(`www.example.com`)"
+                },
+                {
+                    "name": "POSTFIX_HOSTNAME",
+                    "description": "Important to not get into spam boxes.",
+                    "label": "Postfix hostname",
+                    "default": "example.somedomain"
+                }
+           ]
+        }
     ]
 }

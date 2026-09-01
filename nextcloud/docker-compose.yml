@@ -1,0 +1,77 @@
+services:
+  db:
+    image: mariadb:11.4
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    restart: unless-stopped
+    volumes:
+      - db:/var/lib/mysql
+    environment:
+      - MARIADB_ROOT_PASSWORD=12391wlkfda23408sffwhocares
+      - MARIADB_PASSWORD=nextcloud
+      - MARIADB_DATABASE=nextcloud
+      - MARIADB_USER=nextcloud
+      - MARIADB_AUTO_UPGRADE=1
+      - MARIADB_DISABLE_UPGRADE_BACKUP=1
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+
+  app:
+    image: nextcloud
+    restart: unless-stopped
+    volumes:
+      - nextcloud:/var/www/html
+      - ./z_fix-restrictions.conf:/root/portainer-templates/nextcloud/z_fix-restrictions.conf
+    environment:
+      - MYSQL_HOST=db
+      - REDIS_HOST=redis
+      - MYSQL_PASSWORD=nextcloud
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - APACHE_BODY_LIMIT=0
+    depends_on:
+      - db
+      - redis
+
+    networks:
+        - proxynet
+        - default
+    labels:
+      - traefik.enable=true
+
+      #https
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.entrypoints=websecure
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.rule=${TRAEFIK_RULE}
+      # - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls.certresolver=myzerossl 
+      # - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls=true
+      - traefik.http.services.${COMPOSE_PROJECT_NAME}-https.loadbalancer.server.port=80
+
+
+  cron:
+    image: nextcloud
+    restart: unless-stopped
+    volumes:
+      - nextcloud:/var/www/html
+    entrypoint: /cron.sh
+    environment:
+     - PHP_MEMORY_LIMIT=-1
+    depends_on:
+      - db
+      - redis
+
+  smtp:
+    image: mwader/postfix-relay
+    restart: always
+    environment:
+      - POSTFIX_myhostname=${POSTFIX_HOSTNAME}
+
+volumes:
+  db:
+    driver: zfs
+  nextcloud:
+    driver: zfs
+
+networks:
+  proxynet:
+    name: proxynet
