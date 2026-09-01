@@ -45,7 +45,7 @@ services:
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.entrypoints=websecure
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.rule=${TRAEFIK_RULE}
       # - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls.certresolver=myzerossl 
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls=true
+      # - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls=true
 
       # add X-forwarded headers
       # - traefik.http.middlewares.${COMPOSE_PROJECT_NAME}-headers-forwarded.headers.customrequestheaders.X-Forwarded-Proto=https

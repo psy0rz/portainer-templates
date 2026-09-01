@@ -135,6 +135,7 @@ services:
       - "traefik.http.routers.portainer.entrypoints=websecure"
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
       # - "traefik.http.routers.portainer.tls.certresolver=myzerossl"
+      # - "traefik.http.routers.portainer.tls=true"
 
     stop_grace_period: 0s
 
@@ -166,7 +167,7 @@ services:
       - traefik.http.routers.https-catchall.rule=hostregexp(`.*`)
       - traefik.http.services.https-catchall.loadbalancer.server.port=8080
       - traefik.http.routers.https-catchall.entrypoints=websecure
-      - traefik.http.routers.https-catchall.tls=true
+      # - traefik.http.routers.https-catchall.tls=true
       - traefik.http.routers.https-catchall.priority=-1
 
 
