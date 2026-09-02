@@ -1,0 +1,21 @@
+{
+  "hosts": {
+    "srv1": {
+      "ssh": "root@srv1.example.com",
+      "ssh_options": ["-o", "BatchMode=yes"],
+      "portainer_url": "https://portainer.srv1.example.com",
+      "api_key": "ptr_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "endpoint_id": 2,
+      "verify_tls": true,
+      "zfs_root_dataset": "tank/docker/volumes"
+    },
+    "srv2": {
+      "ssh": "root@srv2.example.com",
+      "portainer_url": "https://portainer.srv2.example.com",
+      "api_key": "ptr_yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
+      "endpoint_id": 2,
+      "verify_tls": true,
+      "zfs_root_dataset": "tank/docker/volumes"
+    }
+  }
+}
