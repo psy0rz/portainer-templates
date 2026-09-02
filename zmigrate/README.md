@@ -34,7 +34,7 @@ deleted (`--no-rollback` turns that off).
 Copy the example and fill in your servers:
 
 ```sh
-cp hosts.example.json zmigrate.json
+cp zmigrate.json.example zmigrate.json
 $EDITOR zmigrate.json
 chmod 600 zmigrate.json
 ```

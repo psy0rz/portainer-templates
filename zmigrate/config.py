@@ -55,7 +55,7 @@ def find_config_file(explicit_path=None):
             return expanded
 
     raise ConfigError(
-        "no config file found, looked in: %s (see hosts.example.json)"
+        "no config file found, looked in: %s (see zmigrate.json.example)"
         % ", ".join(CONFIG_SEARCH_PATHS)
     )
 
