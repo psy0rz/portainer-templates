@@ -95,7 +95,7 @@ services:
       - "traefik.enable=true"
 
       - "traefik.http.routers.dashboard.rule=Host(`${DOMAIN}`) && PathPrefix(`${ADMIN_PREFIX:-/server-manager}/traefik`)"
-      - "traefik.http.routers.dashboard.priority=999"
+      - "traefik.http.routers.dashboard.priority=100000"
 
       - "traefik.http.routers.dashboard.entrypoints=websecure"
       - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
@@ -138,6 +138,8 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.portainer.rule=Host(`${DOMAIN}`) && PathPrefix(`${ADMIN_PREFIX:-/server-manager}/portainer`)"
+      - "traefik.http.routers.portainer.priority=100000"
+
       - "traefik.http.routers.portainer.entrypoints=websecure"
       - "traefik.http.routers.portainer.middlewares=portainer"
       - "traefik.http.middlewares.portainer.stripprefix.prefixes=${ADMIN_PREFIX:-/server-manager}/portainer"
