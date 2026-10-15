@@ -4,7 +4,9 @@
 
 # https://raw.githubusercontent.com/psy0rz/portainer-templates/main/templates.json
 
-# Treafik dashboard is on https://host/treafik/dashboard
+# Admin interfaces live under ADMIN_PREFIX (default /server-manager):
+#   Traefik dashboard: https://host/server-manager/traefik/dashboard/
+#   Portainer:         https://host/server-manager/portainer/
 
 
 services:
@@ -14,7 +16,9 @@ services:
 
     command:
       - "--log.level=INFO"
-      - "--api.insecure=true"
+      - "--api.insecure=false"
+      - "--api.dashboard=true"
+      - "--api.basepath=${ADMIN_PREFIX:-/server-manager}/traefik/"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
@@ -90,14 +94,13 @@ services:
       # Traefik status page
       - "traefik.enable=true"
 
-      - "traefik.http.routers.dashboard.rule=Host(`${DOMAIN}`) && ( PathPrefix(`/traefik`) || HeaderRegexp(`Referer`, `/traefik`) )"
+      - "traefik.http.routers.dashboard.rule=Host(`${DOMAIN}`) && PathPrefix(`${ADMIN_PREFIX:-/server-manager}/traefik`)"
       - "traefik.http.routers.dashboard.priority=999"
-      - "traefik.http.routers.dashboard.middlewares=strip-traefik"
-      - "traefik.http.middlewares.strip-traefik.stripprefix.prefixes=/traefik"
 
       - "traefik.http.routers.dashboard.entrypoints=websecure"
       - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
-      - "traefik.http.routers.dashboard.service=dashboard"
+      # - "traefik.http.routers.dashboard.service=dashboard"
+      - "traefik.http.routers.dashboard.service=api@internal"
       # - "traefik.http.routers.dashboard.tls.certresolver=myzerossl"
 
       # redirect all http to https
@@ -111,6 +114,9 @@ services:
       - traefik.http.routers.xmlrpc.rule=PathPrefix(`/xmlrpc.php`)
       - traefik.http.routers.xmlrpc.priority=1000
       - traefik.http.routers.xmlrpc.tls=true
+      - traefik.http.routers.xmlrpc.service=api@internal
+      - traefik.http.routers.xmlrpc.middlewares=xmlrpc-notfound
+      - traefik.http.middlewares.xmlrpc-notfound.replacepath.path=/api/xmlrpc-blocked
 
       # Generic auth used to protect some webinterfaces
       # Use:       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.middlewares=auth
@@ -123,7 +129,7 @@ services:
 
   portainer:
     image: portainer/portainer-ce:latest
-    command: -H unix:///var/run/docker.sock --admin-password ${PORTAINER_ADMIN_PASSWORD}
+    command: -H unix:///var/run/docker.sock --log-level ${PORTAINER_LOG_LEVEL:-DEBUG} --base-url ${ADMIN_PREFIX:-/server-manager}/portainer/ --admin-password ${PORTAINER_ADMIN_PASSWORD}
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -131,8 +137,10 @@ services:
 
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.portainer.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.portainer.rule=Host(`${DOMAIN}`) && PathPrefix(`${ADMIN_PREFIX:-/server-manager}/portainer`)"
       - "traefik.http.routers.portainer.entrypoints=websecure"
+      - "traefik.http.routers.portainer.middlewares=portainer"
+      - "traefik.http.middlewares.portainer.stripprefix.prefixes=${ADMIN_PREFIX:-/server-manager}/portainer"
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
       # - "traefik.http.routers.portainer.tls.certresolver=myzerossl"
       # - "traefik.http.routers.portainer.tls=true"
