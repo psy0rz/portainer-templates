@@ -68,9 +68,9 @@ services:
 
 volumes:
   db:
-    driver: zfs
+    driver: ${VOLUME_DRIVER-zfs}
   nextcloud:
-    driver: zfs
+    driver: ${VOLUME_DRIVER-zfs}
 
 networks:
   proxynet:

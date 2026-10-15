@@ -132,9 +132,9 @@ networks:
 
 volumes:
   wordpress:
-    driver: zfs
+    driver: ${VOLUME_DRIVER-zfs}
   db:
-    driver: zfs
+    driver: ${VOLUME_DRIVER-zfs}
   logs:
-    driver: zfs
+    driver: ${VOLUME_DRIVER-zfs}
     

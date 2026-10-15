@@ -58,8 +58,8 @@ networks:
 
 volumes:
   grafana:
-    driver: zfs
+    driver: ${VOLUME_DRIVER-zfs}
   vm:
-    driver: zfs
+    driver: ${VOLUME_DRIVER-zfs}
   vl:
-    driver: zfs
+    driver: ${VOLUME_DRIVER-zfs}

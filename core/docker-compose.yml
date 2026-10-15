@@ -190,8 +190,8 @@ networks:
 
 volumes:
  traefik:
-   driver: zfs
+   driver: ${VOLUME_DRIVER-zfs}
  portainer:
-   driver: zfs
+   driver: ${VOLUME_DRIVER-zfs}
 
 

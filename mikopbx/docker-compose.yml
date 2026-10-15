@@ -40,9 +40,9 @@ services:
 
 volumes:
   cf:
-    driver: zfs
+    driver: ${VOLUME_DRIVER-zfs}
   storage:
-    driver: zfs
+    driver: ${VOLUME_DRIVER-zfs}
   
 
 networks:

@@ -50,4 +50,4 @@ networks:
 
 volumes:
   config:
-    driver: zfs
+    driver: ${VOLUME_DRIVER-zfs}
