@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Server manager</title>
+  <style>
+    :root { --text: #222; --muted: #777; --bg: #fff; --card: #f4f4f4; --link: #dc8100; }
+    @media (prefers-color-scheme: dark) { :root { --text: #ddd; --muted: #999; --bg: #1a1a1a; --card: #262626; } }
+    body { font-family: system-ui, sans-serif; max-width: 40em; margin: 10vh auto; padding: 0 1em; line-height: 1.5; color: var(--text); background: var(--bg); }
+    ul { list-style: none; padding: 0; }
+    li a { display: block; padding: .75em 1em; margin-bottom: .5em; background: var(--card); border-radius: 6px; color: var(--link); text-decoration: none; }
+    li a:hover { text-decoration: underline; }
+    .path { color: var(--muted); font-size: .85em; margin-left: .5em; }
+    .disabled a { color: var(--muted); }
+    #status { color: var(--muted); }
+    .powered-by { color: var(--muted); font-size: .9em; }
+    .project-links { display: flex; flex-wrap: wrap; align-items: center; gap: .5em; margin-top: 3em; padding-top: 1em; border-top: 1px solid var(--card); }
+    .project-links a { display: inline-flex; align-items: center; gap: .5em; padding: .4em .8em; border-radius: 999px; background: var(--card); color: var(--muted); text-decoration: none; font-size: .9em; }
+    .project-links a:hover { color: var(--text); }
+    .project-links svg { width: 1.1em; height: 1.1em; fill: currentColor; }
+  </style>
+</head>
+<body>
+  <h1>Alpinebox server manager</h1>
+  <p id="status">Loading…</p>
+  <ul id="admin-links"></ul>
+
+  <svg style="display: none">
+    <symbol id="github-logo" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></symbol>
+  </svg>
+  <footer class="project-links">
+    <span class="powered-by">Powered by</span>
+    <a href="https://github.com/psy0rz/alpinebox" target="_blank" rel="noopener"><svg><use href="#github-logo"/></svg>psy0rz/alpinebox</a>
+    <a href="https://github.com/psy0rz/portainer-templates" target="_blank" rel="noopener"><svg><use href="#github-logo"/></svg>psy0rz/portainer-templates</a>
+  </footer>
+
+  <script>
+    // Lists every Traefik router whose rule contains PathPrefix(`<admin prefix>/<something>`),
+    // so new admin interfaces under the admin prefix show up here automatically.
+    // The admin prefix is taken from the url this page is served on (ADMIN_PREFIX in .env).
+    const adminPrefix = location.pathname.replace(/\/+$/, '');
+    const traefikRoutersUrl = adminPrefix + '/traefik/api/http/routers?per_page=1000';
+    const statusText = document.getElementById('status');
+    const adminLinkList = document.getElementById('admin-links');
+
+    function escapeRegExp(text) {
+      return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function addAdminLink(adminPath, isEnabled) {
+      const listItem = document.createElement('li');
+      if (!isEnabled) listItem.className = 'disabled';
+      const link = document.createElement('a');
+      link.href = adminPath + '/';
+      link.textContent = adminPath.slice(adminPrefix.length + 1);
+      const pathLabel = document.createElement('span');
+      pathLabel.className = 'path';
+      pathLabel.textContent = adminPath + '/' + (isEnabled ? '' : ' (disabled)');
+      link.appendChild(pathLabel);
+      listItem.appendChild(link);
+      adminLinkList.appendChild(listItem);
+    }
+
+    async function showAdminLinks() {
+      const pathPrefixPattern = new RegExp('PathPrefix\\(`(' + escapeRegExp(adminPrefix) + '/[^`/]+)/?`\\)', 'g');
+      const isEnabledByAdminPath = new Map();
+      try {
+        const response = await fetch(traefikRoutersUrl);
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const traefikRouters = await response.json();
+        for (const traefikRouter of traefikRouters) {
+          for (const ruleMatch of (traefikRouter.rule || '').matchAll(pathPrefixPattern)) {
+            const adminPath = ruleMatch[1];
+            const isEnabled = traefikRouter.status === 'enabled';
+            isEnabledByAdminPath.set(adminPath, isEnabledByAdminPath.get(adminPath) || isEnabled);
+          }
+        }
+      } catch (fetchError) {
+        statusText.textContent = 'Could not read the routers from the Traefik API (' + fetchError.message + ').';
+        addAdminLink(adminPrefix + '/traefik', true);
+        return;
+      }
+      const sortedAdminPaths = [...isEnabledByAdminPath.keys()].sort();
+      statusText.textContent = sortedAdminPaths.length ? '' : 'No admin interfaces found.';
+      for (const adminPath of sortedAdminPaths) addAdminLink(adminPath, isEnabledByAdminPath.get(adminPath));
+    }
+
+    showAdminLinks();
+  </script>
+</body>
+</html>

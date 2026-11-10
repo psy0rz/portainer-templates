@@ -5,6 +5,7 @@
 # https://raw.githubusercontent.com/psy0rz/portainer-templates/main/templates.json
 
 # Admin interfaces live under ADMIN_PREFIX (default /server-manager):
+#   Overview:          https://host/server-manager/
 #   Traefik dashboard: https://host/server-manager/traefik/dashboard/
 #   Portainer:         https://host/server-manager/portainer/
 
@@ -178,11 +179,21 @@ services:
     labels:
       - traefik.enable=true
       # catch all for when containers are down for maintanance:
+      - traefik.http.services.portal.loadbalancer.server.port=8080
+
       - traefik.http.routers.https-catchall.rule=hostregexp(`.*`)
-      - traefik.http.services.https-catchall.loadbalancer.server.port=8080
       - traefik.http.routers.https-catchall.entrypoints=websecure
       # - traefik.http.routers.https-catchall.tls=true
       - traefik.http.routers.https-catchall.priority=-1
+      - traefik.http.routers.https-catchall.service=portal
+
+      # Overview page of all admin interfaces (every router with PathPrefix(`ADMIN_PREFIX/...`), read from the traefik api)
+      - "traefik.http.routers.server-manager.rule=Host(`${DOMAIN}`) && (Path(`${ADMIN_PREFIX:-/server-manager}`) || Path(`${ADMIN_PREFIX:-/server-manager}/`))"
+      - traefik.http.routers.server-manager.priority=100000
+      - traefik.http.routers.server-manager.entrypoints=websecure
+      - traefik.http.routers.server-manager.middlewares=server-manager-page
+      - traefik.http.middlewares.server-manager-page.replacepath.path=/server-manager.html
+      - traefik.http.routers.server-manager.service=portal
 
 
     stop_grace_period: 0s
