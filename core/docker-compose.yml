@@ -111,21 +111,6 @@ services:
       - traefik.http.routers.http-catchall.priority=-1
       - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
 
-      # Block paths probed by bad bots and exploit scanners, globally for all hosts (403 Forbidden).
-      # Matches at any depth (e.g. /blog/xmlrpc.php):
-      #   xmlrpc.php (wordpress), .git .svn .hg .bzr (VCS metadata), .aws .ssh (credentials),
-      #   .env .env.* (secrets), .htaccess .htpasswd, .DS_Store, wp-config.php.* (config backups),
-      #   *.log (debug.log, error.log etc.)
-      # Only whole path segments match, so gitea clone urls like /user/repo.git stay reachable.
-      # $$ escapes $ for docker compose interpolation.
-      - traefik.http.routers.blocked-paths.rule=PathRegexp(`/(xmlrpc\.php|\.(git|svn|hg|bzr|aws|ssh)(/.*)?|\.env(\.[^/]*)?|\.ht(access|passwd)|\.DS_Store|wp-config\.php\.[^/]+|[^/]*\.log)$$`)
-      - traefik.http.routers.blocked-paths.priority=1000
-      - traefik.http.routers.blocked-paths.entrypoints=websecure
-      - traefik.http.routers.blocked-paths.tls=true
-      - traefik.http.routers.blocked-paths.service=noop@internal
-      - traefik.http.routers.blocked-paths.middlewares=blocked-paths-deny
-      - traefik.http.middlewares.blocked-paths-deny.ipallowlist.sourcerange=127.0.0.1/32
-
       # Generic auth used to protect some webinterfaces
       # Use:       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.middlewares=auth
       - "traefik.http.middlewares.auth.basicauth.usersFile=/etc/traefik/htpasswd"
@@ -166,7 +151,8 @@ services:
     command: --schedule "0 0 4 * * *"
 
   # Portal: nginx serving ./portal/www, config in ./portal/nginx.conf.template.
-  # Currently a catch-all maintenance page (503) for hosts whose containers are down.
+  # Serves the admin overview page, the blocked paths page (403) and a catch-all maintenance page (503)
+  # for hosts whose containers are down.
   maintanance:
     image: nginx:alpine
     restart: unless-stopped
@@ -195,6 +181,22 @@ services:
       - traefik.http.routers.server-manager.middlewares=server-manager-page
       - traefik.http.middlewares.server-manager-page.replacepath.path=/server-manager.html
       - traefik.http.routers.server-manager.service=portal
+
+      # Block paths probed by bad bots and exploit scanners, globally for all hosts.
+      # The portal shows blocked.html with status 403 Forbidden.
+      # Matches at any depth (e.g. /blog/xmlrpc.php):
+      #   xmlrpc.php (wordpress), .git .svn .hg .bzr (VCS metadata), .aws .ssh (credentials),
+      #   .env .env.* (secrets), .htaccess .htpasswd, .DS_Store, wp-config.php.* (config backups),
+      #   *.log (debug.log, error.log etc.)
+      # Only whole path segments match, so gitea clone urls like /user/repo.git stay reachable.
+      # $$ escapes $ for docker compose interpolation.
+      - traefik.http.routers.blocked-paths.rule=PathRegexp(`/(xmlrpc\.php|\.(git|svn|hg|bzr|aws|ssh)(/.*)?|\.env(\.[^/]*)?|\.ht(access|passwd)|\.DS_Store|wp-config\.php\.[^/]+|[^/]*\.log)$$`)
+      - traefik.http.routers.blocked-paths.priority=1000
+      - traefik.http.routers.blocked-paths.entrypoints=websecure
+      - traefik.http.routers.blocked-paths.tls=true
+      - traefik.http.routers.blocked-paths.middlewares=blocked-paths-page
+      - traefik.http.middlewares.blocked-paths-page.replacepath.path=/blocked
+      - traefik.http.routers.blocked-paths.service=portal
 
 
     stop_grace_period: 0s

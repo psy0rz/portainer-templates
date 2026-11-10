@@ -37,10 +37,10 @@ The core stack contains these components:
 * **Traefik**: A reverse proxy. Traefik has these functions:
   * It supplies automatic SSL.
   * It sends http requests to https.
-  * It has a global blocklist. Bots and exploit scanners try to find some paths (`xmlrpc.php`, `.git`, `.env`, `*.log`, and other paths). For these paths, Traefik sends a 403 response.
+  * It has a global blocklist. Bots and exploit scanners try to find some paths (`xmlrpc.php`, `.git`, `.env`, `*.log`, and other paths). For these paths, Traefik sends the request to the portal, which shows a blocked page (403).
 * **Portainer**: The Docker web GUI.
 * **Watchtower**: It updates the images each night at 04:00.
-* **Portal**: An nginx server. It shows the server manager overview page. It also shows a maintenance page (503) for hosts that have stopped containers.
+* **Portal**: An nginx server. It shows the server manager overview page. It shows a blocked page (403) for the paths in the global blocklist. It also shows a maintenance page (503) for hosts that have stopped containers.
 
 To start the core stack:
 

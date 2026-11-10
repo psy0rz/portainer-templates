@@ -1,5 +1,5 @@
-# Portal: overview page of the admin interfaces at ADMIN_PREFIX, and the catch-all for hosts whose
-# containers are down (maintenance page, always 503).
+# Portal: overview page of the admin interfaces at ADMIN_PREFIX, the page for globally blocked paths
+# (always 403), and the catch-all for hosts whose containers are down (maintenance page, always 503).
 # This is a template: the nginx image runs envsubst on it at startup (only on variables set in the
 # container environment, so nginx $variables are left alone) and writes it to /etc/nginx/nginx.conf.
 worker_processes 1;
@@ -25,6 +25,20 @@ http {
       add_header Cache-Control "no-store" always;
       sub_filter '{{CONTACT_EMAIL}}' '${PORTAL_CONTACT_EMAIL}';
       sub_filter_once off;
+    }
+
+    error_page 403 /blocked.html;
+
+    location = /blocked.html {
+      internal;
+      add_header Cache-Control "no-store" always;
+      sub_filter '{{CONTACT_EMAIL}}' '${PORTAL_CONTACT_EMAIL}';
+      sub_filter_once off;
+    }
+
+    # Paths blocked globally (bot and exploit scanner probes). Traefik rewrites them to this path.
+    location = /blocked {
+      return 403;
     }
 
     # Overview of the admin interfaces. Traefik rewrites ADMIN_PREFIX (e.g. /server-manager) to this path.
