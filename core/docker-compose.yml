@@ -162,7 +162,8 @@ services:
     image: nickfedor/watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    command: --rolling-restart --schedule "0 0 4 * * *"
+    # No --rolling-restart: it refuses containers with depends_on (nextcloud, magento).
+    command: --schedule "0 0 4 * * *"
 
   # Portal: nginx serving ./portal/www, config in ./portal/nginx.conf.template.
   # Currently a catch-all maintenance page (503) for hosts whose containers are down.
