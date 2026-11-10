@@ -6,61 +6,86 @@ In contrast to the default Portainer templates, these run behind an automatic Tr
 
 # Requirements
 
-NOTE: [Alpinebox](https://github.com/psy0rz/alpinebox) has scripts that do all of this automatically.
+NOTE: [Alpinebox](https://github.com/psy0rz/alpinebox) has scripts that do all of these steps automatically.
 
-* Install Docker and the Docker compose cli.
+* Install Docker.
+* Install the Docker compose CLI.
 
-For ZFS volumes (optional, but needed for zfs-autobackup and zmigrate):
+ZFS volumes are optional. You must have ZFS volumes if you use zfs-autobackup or zmigrate. To use ZFS volumes:
 
-* Get ZFS support for your /var/lib/docker mountpoint.
-* Install <https://github.com/csachs/docker-zfs-plugin.git> so that you have ZFS volume support.
+* Make sure that the `/var/lib/docker` mount point has ZFS support.
+* Install <https://github.com/csachs/docker-zfs-plugin.git>. This plugin gives ZFS volume support.
 
-Without ZFS, set `VOLUME_DRIVER=local` in `core/.env`, and choose `local` as the volume driver when you create a stack from a template. Both default to `zfs`.
+The default volume driver is `zfs`. To operate without ZFS:
+
+* In `core/.env`, set `VOLUME_DRIVER=local`.
+* When you create a stack from a template, select `local` as the volume driver.
 
 # Start the core stack
 
-The core stack contains:
+The core stack contains these components:
 
-* **Traefik**: reverse proxy with automatic SSL, http to https redirect, and a global blocklist that returns 403 for paths probed by bots and exploit scanners (`xmlrpc.php`, `.git`, `.env`, `*.log`, etc.).
-* **Portainer**: Docker web GUI.
-* **Watchtower**: updates images every night at 04:00.
-* **Portal**: nginx serving the server manager overview page, and a maintenance page (503) for hosts whose containers are down.
+* **Traefik**: A reverse proxy. Traefik has these functions:
+  * It supplies automatic SSL.
+  * It sends http requests to https.
+  * It has a global blocklist. Bots and exploit scanners try to find some paths (`xmlrpc.php`, `.git`, `.env`, `*.log`, and other paths). For these paths, Traefik sends a 403 response.
+* **Portainer**: The Docker web GUI.
+* **Watchtower**: It updates the images each night at 04:00.
+* **Portal**: An nginx server. It shows the server manager overview page. It also shows a maintenance page (503) for hosts that have stopped containers.
 
-To start it:
+To start the core stack:
 
-* Go to the `core` directory.
-* Copy `.env-example` to `.env` and edit it. Set at least `DOMAIN` and the Let's Encrypt or ZeroSSL settings.
-* `docker compose up -d`
+1. Go to the `core` directory.
+2. Copy `.env-example` to `.env`.
+3. Edit `.env`. Set `DOMAIN` and the Let's Encrypt or ZeroSSL settings. These settings are the minimum.
+4. Run `docker compose up -d`.
 
 ## Optional files
 
-* `htpasswd`: users for the generic `auth` middleware that other templates can use to protect web interfaces. Create entries with `htpasswd -nbB user 'password'`.
-* `certs.yml` and `certs/`: custom (non-ACME) certificates for Traefik.
-* `docker-compose.override.yml`: see `docker-compose.override.yml.example` for using a separate IP as a landing page for reserved domains.
-* `clean-expired-certs.sh`: removes expired certificates from Traefik's ACME storage.
+* `htpasswd`: This file contains the users for the generic `auth` middleware. Other templates can use this middleware to protect web interfaces. To create an entry, run `htpasswd -nbB user 'password'`.
+* `certs.yml` and `certs/`: These files contain custom (non-ACME) certificates for Traefik.
+* `docker-compose.override.yml`: You can use this file to set a separate IP address as a landing page for reserved domains. Refer to `docker-compose.override.yml.example`.
+* `clean-expired-certs.sh`: This script removes expired certificates from the Traefik ACME storage.
 
 # Server manager
 
-All admin interfaces live under `ADMIN_PREFIX` (default `/server-manager`) on your `DOMAIN`:
+All admin interfaces are under `ADMIN_PREFIX` on your `DOMAIN`. The default `ADMIN_PREFIX` is `/server-manager`. Examples:
 
 * Overview: <https://docker1.example.com/server-manager/>
 * Portainer: <https://docker1.example.com/server-manager/portainer/>
 * Traefik dashboard: <https://docker1.example.com/server-manager/traefik/dashboard/>
 
-The overview page lists every Traefik router under the admin prefix, so admin interfaces of other stacks show up there automatically.
+The overview page shows a list of all Traefik routers under the admin prefix. Thus, the admin interfaces of other stacks show on this page automatically.
 
-The default Portainer login is admin/admin (`PORTAINER_ADMIN_PASSWORD` in `.env`). Change it after the first login.
+The default Portainer login is admin/admin. `PORTAINER_ADMIN_PASSWORD` in `.env` sets the password.
+
+CAUTION: Change the password after the first login.
 
 # Use the templates
 
-In Portainer, go to Settings and enter this in the App templates field:
+1. In Portainer, go to Settings.
+2. In the App templates field, enter this URL:
 
-<https://raw.githubusercontent.com/psy0rz/portainer-templates/main/templates.json>
+   <https://raw.githubusercontent.com/psy0rz/portainer-templates/main/templates.json>
 
-Now you can go to App templates and create a stack. Available templates include Wordpress, Wordpress litespeed, Grav, Magento 2, Symfony litespeed, Nextcloud, shared MariaDB, PHPMyAdmin, MikoPBX and a Mailchannels relay.
+3. Go to App templates.
+4. Create a stack.
+
+These templates are available:
+
+* Wordpress
+* Wordpress litespeed
+* Grav
+* Magento 2
+* Symfony litespeed
+* Nextcloud
+* Shared MariaDB
+* PHPMyAdmin
+* MikoPBX
+* Mailchannels relay
 
 # Backups and migration
 
-With ZFS volumes it's easy to make backups and snapshots with my other project: <https://pypi.org/project/zfs-autobackup/>
+With ZFS volumes, you can make backups and snapshots with zfs-autobackup: <https://pypi.org/project/zfs-autobackup/>
 
-To move a stack including its ZFS volumes to another server, see [zmigrate](zmigrate/README.md).
+To move a stack and its ZFS volumes to a different server, refer to [zmigrate](zmigrate/README.md).
