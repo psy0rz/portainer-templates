@@ -40,7 +40,12 @@ The core stack contains these components:
   * It has a global blocklist. Bots and exploit scanners try to find some paths (`xmlrpc.php`, `.git`, `.env`, `*.log`, and other paths). For these paths, Traefik sends the request to the portal, which shows a blocked page (403).
 * **Portainer**: The Docker web GUI.
 * **Watchtower**: It updates the images each night at 04:00.
-* **Portal**: An nginx server. It shows the server manager overview page. It shows a blocked page (403) for the paths in the global blocklist. It also shows a maintenance page (503) for hosts that have stopped containers.
+* **Portal**: An nginx server. It has these functions:
+  * It shows the server manager overview page.
+  * It shows a blocked page (403) for the paths in the global blocklist.
+  * It shows a maintenance page (503) for hosts that have stopped containers. The maintenance page refreshes each 60 seconds. When the containers start again, the visitor sees the site again.
+
+  The blocked page and the maintenance page are in Dutch and English. They show a "contact us" link to `PORTAL_CONTACT_EMAIL` (set it in `core/.env`). To change the pages, edit the files in `core/portal/www/`.
 
 To start the core stack:
 

@@ -9,12 +9,17 @@
     body { font-family: system-ui, sans-serif; max-width: 40em; margin: 15vh auto; padding: 0 1em; line-height: 1.5; color: #222; background: #fff; }
     a { color: #dc8100; }
     @media (prefers-color-scheme: dark) { body { color: #ddd; background: #1a1a1a; } }
+    .spinner { width: 2.5em; height: 2.5em; border: 0.25em solid rgba(128, 128, 128, 0.25); border-top-color: #dc8100; border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 4s; } }
   </style>
 </head>
 <body>
+  <div class="spinner" role="img" aria-label="Bezig / In progress"></div>
   <h1>Website onderhoud</h1>
   <p>In verband met onderhoud is deze site tijdelijk onbereikbaar.
      Als dit probleem aanhoudt, <a href="mailto:{{CONTACT_EMAIL}}">neem dan contact met ons op</a>.</p>
+  <p>Deze pagina ververst elke minuut automatisch. Zodra de site weer beschikbaar is, ziet u hem vanzelf.</p>
   <p>Uw web team</p>
 
   <hr>
@@ -22,6 +27,7 @@
   <h1 lang="en">Website maintenance</h1>
   <p lang="en">This site is temporarily unavailable due to maintenance.
      If this problem continues, <a href="mailto:{{CONTACT_EMAIL}}">please contact us</a>.</p>
+  <p lang="en">This page refreshes automatically every minute. When the site is available again, you will see it automatically.</p>
   <p lang="en">Your web team</p>
 </body>
 </html>
