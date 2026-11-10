@@ -163,20 +163,17 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --rolling-restart --schedule "0 0 4 * * *"
 
-  maintenance:
-    image: wickerlabs/maintenance
+  # Portal: nginx serving ./portal/www, config in ./portal/nginx.conf.template.
+  # Currently a catch-all maintenance page (503) for hosts whose containers are down.
+  maintanance:
+    image: nginx:alpine
     restart: unless-stopped
     environment:
-      TEAM_NAME: "Uw web team"
-      HEADLINE: "Website onderhoud"
-      TITLE: "Website onderhoud"
-      MAIL_ADDRESS: "info@datux.nl"
-      # LINK_COLOR: "#dc8100"
-      # THEME: "Light"
-      PORT: 8080
-      RESPONSE_CODE: "503 Service Unavailable"
-      MESSAGE: "In verband met onderhoud is deze site tijdelijk onbereikbaar. Als dit probleem aanhoudt, neem dan contact met ons op."
-      CONTACT_LINK: "neem contact op"
+      NGINX_ENVSUBST_OUTPUT_DIR: /etc/nginx
+      PORTAL_CONTACT_EMAIL: ${PORTAL_CONTACT_EMAIL}
+    volumes:
+      - ./portal/nginx.conf.template:/etc/nginx/templates/nginx.conf.template:ro
+      - ./portal/www:/usr/share/nginx/html:ro
 
     labels:
       - traefik.enable=true

@@ -1,0 +1,33 @@
+# Portal: catch-all for hosts whose containers are down (maintenance page, always 503).
+# This is a template: the nginx image runs envsubst on it at startup (only on variables set in the
+# container environment, so nginx $variables are left alone) and writes it to /etc/nginx/nginx.conf.
+worker_processes 1;
+
+events {
+  worker_connections 256;
+}
+
+http {
+  include /etc/nginx/mime.types;
+  access_log off;
+  server_tokens off;
+
+  server {
+    listen 8080;
+    root /usr/share/nginx/html;
+
+    error_page 503 /maintenance.html;
+
+    location = /maintenance.html {
+      internal;
+      add_header Retry-After 3600 always;
+      add_header Cache-Control "no-store" always;
+      sub_filter '{{CONTACT_EMAIL}}' '${PORTAL_CONTACT_EMAIL}';
+      sub_filter_once off;
+    }
+
+    location / {
+      return 503;
+    }
+  }
+}
