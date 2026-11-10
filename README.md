@@ -6,7 +6,16 @@ In contrast to the default Portainer templates, these run behind an automatic Tr
 
 # Requirements
 
-NOTE: [Alpinebox](https://github.com/psy0rz/alpinebox) has scripts that do all of these steps automatically.
+We recommend [Alpinebox](https://github.com/psy0rz/alpinebox) as the operating system for the Docker server. Alpinebox installs Alpine Linux with ZFS as the root file system. It also has scripts that install Docker and the ZFS volume plugin.
+
+To prepare an Alpinebox server:
+
+1. Install Alpinebox. Refer to the [Alpinebox README](https://github.com/psy0rz/alpinebox#installing).
+2. Go to `/root/alpinebox`.
+3. Run `./install-docker`.
+4. Do the instructions that the script shows.
+
+If you use a different operating system, do these steps manually:
 
 * Install Docker.
 * Install the Docker compose CLI.

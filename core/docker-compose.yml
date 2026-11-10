@@ -1,6 +1,6 @@
 # Core environment to use the other templates with.
 # Its a treafik + portainer + watchdog stack.
-# Use on Alpinbox with ZFS docker volume support.
+# Use on Alpinebox (https://github.com/psy0rz/alpinebox) with ZFS docker volume support.
 
 # https://raw.githubusercontent.com/psy0rz/portainer-templates/main/templates.json
 
