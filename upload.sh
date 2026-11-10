@@ -1,3 +1,3 @@
 #!/bin/bash
 
-rsync --exclude .env -avx . $1:portainer-templates 
+rsync --exclude .env --exclude .git -avx . $1:portainer-templates 

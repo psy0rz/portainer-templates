@@ -52,10 +52,8 @@ To start the core stack:
 
 1. Go to the `core` directory.
 2. Copy `.env-example` to `.env`.
-3. Edit `.env`. Set `DOMAIN` and the Let's Encrypt or ZeroSSL settings. These settings are the minimum.
-4. Create the `htpasswd` file. This file contains the users for the generic `auth` middleware. The `auth` middleware protects the admin interfaces. Other templates can also use this middleware to protect web interfaces. To create an entry, run `htpasswd -nbB admin 'password' >> htpasswd`.
-
-   If the `htpasswd` file does not exist, `docker compose up` stops with an error.
+3. Edit `.env`. Set `DOMAIN` and the Let's Encrypt or ZeroSSL settings.
+4. In `.env`, set `ADMIN_PASSWORD_HASH`. To create the hash, run `htpasswd -nbB admin 'password' | cut -d ":" -f2`. Put the hash in single quotes. These settings are the minimum.
 5. Run `docker compose up -d`.
 
 ## Optional files
@@ -73,11 +71,11 @@ All admin interfaces are under `ADMIN_PREFIX` on your `DOMAIN`. The default `ADM
 * Traefik dashboard: <https://docker1.example.com/server-manager/traefik/dashboard/>
 * Logs (VictoriaLogs): <https://docker1.example.com/server-manager/victoria-logs/select/vmui/>
 
-The `auth` middleware protects the overview, Portainer, the Traefik dashboard and the logs. The users are in the `htpasswd` file.
+The generic `auth` middleware protects the overview, Portainer, the Traefik dashboard and the logs. Other templates can also use this middleware to protect web interfaces. The user is `admin`. `ADMIN_PASSWORD_HASH` in `.env` sets the password.
 
 The overview page shows a list of all Traefik routers under the admin prefix. Thus, the admin interfaces of other stacks show on this page automatically.
 
-The default Portainer login is admin/admin. `PORTAINER_ADMIN_PASSWORD` in `.env` sets the password.
+Portainer has its own login. On a new installation, the Portainer admin password is the same as the `auth` password. Portainer uses `ADMIN_PASSWORD_HASH` only when it creates a new data volume. For an existing Portainer, change the password in the Portainer web interface.
 
 CAUTION: Change the password after the first login.
 

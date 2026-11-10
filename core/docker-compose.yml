@@ -71,14 +71,6 @@ services:
     volumes:
      - "/var/run/docker.sock:/var/run/docker.sock:ro"
      - traefik:/storage
-     # Long syntax with create_host_path: false, so compose stops with an error if htpasswd does not exist.
-     # (The short syntax creates an empty directory instead.)
-     - type: bind
-       source: ./htpasswd
-       target: /etc/traefik/htpasswd
-       read_only: true
-       bind:
-         create_host_path: false
      - ./certs.yml:/etc/traefik/certs.yml:ro
      - ./certs:/certs:ro
 
@@ -112,7 +104,8 @@ services:
 
       # Generic auth used to protect some webinterfaces
       # Use:       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.middlewares=auth
-      - "traefik.http.middlewares.auth.basicauth.usersFile=/etc/traefik/htpasswd"
+      # User admin, with the same password hash as the portainer admin (ADMIN_PASSWORD_HASH in .env).
+      - "traefik.http.middlewares.auth.basicauth.users=admin:${ADMIN_PASSWORD_HASH:?Set ADMIN_PASSWORD_HASH in .env}"
 
 
 
@@ -121,7 +114,7 @@ services:
 
   portainer:
     image: portainer/portainer-ce:latest
-    command: -H unix:///var/run/docker.sock --log-level ${PORTAINER_LOG_LEVEL:-DEBUG} --base-url ${ADMIN_PREFIX:-/server-manager}/portainer/ --admin-password ${PORTAINER_ADMIN_PASSWORD}
+    command: -H unix:///var/run/docker.sock --log-level ${PORTAINER_LOG_LEVEL:-DEBUG} --base-url ${ADMIN_PREFIX:-/server-manager}/portainer/ --admin-password ${ADMIN_PASSWORD_HASH:?Set ADMIN_PASSWORD_HASH in .env}
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -143,7 +136,7 @@ services:
     stop_grace_period: 0s
 
   # Victorialogs: stores the traefik log and access log.
-  # Web UI: https://host/server-manager/victoria-logs/select/vmui/ (protected with the generic auth middleware, needs ./htpasswd)
+  # Web UI: https://host/server-manager/victoria-logs/select/vmui/ (protected with the generic auth middleware)
   victorialogs:
     image: victoriametrics/victoria-logs:latest
     restart: unless-stopped
