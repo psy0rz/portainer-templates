@@ -1,5 +1,5 @@
 # Core environment to use the other templates with.
-# Its a treafik + portainer + watchdog stack.
+# Its a treafik + portainer + watchtower + victorialogs stack.
 # Use on Alpinebox (https://github.com/psy0rz/alpinebox) with ZFS docker volume support.
 
 # https://raw.githubusercontent.com/psy0rz/portainer-templates/main/templates.json
@@ -8,6 +8,7 @@
 #   Overview:          https://host/server-manager/
 #   Traefik dashboard: https://host/server-manager/traefik/dashboard/
 #   Portainer:         https://host/server-manager/portainer/
+#   Logs:              https://host/server-manager/victoria-logs/select/vmui/
 
 
 services:
@@ -47,24 +48,13 @@ services:
       - "--metrics.prometheus.addServicesLabels=true"
       - "--metrics.prometheus.addRoutersLabels=true"
 
-      # - "--experimental.otlpLogs=true"
-      # - "--accesslog.otlp.grpc=true"
-      # - "--accesslog.otlp.grpc.endpoint=stats-vl-1:4317"
-      # - "--accesslog.otlp.grpc.insecure=true"
-
-      # - "--tracing=true"
-      # - "--tracing.otlp.grpc=true"
-      # - "--tracing.addInternals=true"
-      # - "--tracing.otlp.grpc=true"
-      # - "--tracing.otlp.grpc.endpoint=stats.server.bla:4317"
-      # - "--tracing.otlp.grpc.insecure=true"
-
-      # victoria metrics logging
-      # - "--experimental.otlpLogs=true"
-      # - "--accesslog.otlp.http=${OTLP}"
-      # - "--accesslog.otlp.http.endpoint=${OTLP_ENDPOINT}"
-      # - "--accesslog.otlp.http.headers.Authorization=${OTLP_AUTH}" # echo -n user:pass|base64
-      # - "--accesslog.fields.headers.defaultMode=keep"
+      # Send the traefik log and the access log to victorialogs (OTLP over http).
+      # The access log also stays on stdout.
+      - "--experimental.otlpLogs=true"
+      - "--log.otlp.http.endpoint=http://victorialogs:9428${ADMIN_PREFIX:-/server-manager}/victoria-logs/insert/opentelemetry/v1/logs"
+      - "--accesslog.otlp.http.endpoint=http://victorialogs:9428${ADMIN_PREFIX:-/server-manager}/victoria-logs/insert/opentelemetry/v1/logs"
+      - "--accesslog.fields.headers.names.User-Agent=keep"
+      - "--accesslog.fields.headers.names.Referer=keep"
 
       # custom certs
       - --providers.docker=true
@@ -81,7 +71,14 @@ services:
     volumes:
      - "/var/run/docker.sock:/var/run/docker.sock:ro"
      - traefik:/storage
-     - ./htpasswd:/etc/traefik/htpasswd:ro 
+     # Long syntax with create_host_path: false, so compose stops with an error if htpasswd does not exist.
+     # (The short syntax creates an empty directory instead.)
+     - type: bind
+       source: ./htpasswd
+       target: /etc/traefik/htpasswd
+       read_only: true
+       bind:
+         create_host_path: false
      - ./certs.yml:/etc/traefik/certs.yml:ro
      - ./certs:/certs:ro
 
@@ -99,9 +96,11 @@ services:
       - "traefik.http.routers.dashboard.priority=100000"
 
       - "traefik.http.routers.dashboard.entrypoints=websecure"
+      - "traefik.http.routers.dashboard.observability.accessLogs=false"
       - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
       # - "traefik.http.routers.dashboard.service=dashboard"
       - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.middlewares=auth"
       # - "traefik.http.routers.dashboard.tls.certresolver=myzerossl"
 
       # redirect all http to https
@@ -134,11 +133,38 @@ services:
       - "traefik.http.routers.portainer.priority=100000"
 
       - "traefik.http.routers.portainer.entrypoints=websecure"
-      - "traefik.http.routers.portainer.middlewares=portainer"
-      - "traefik.http.middlewares.portainer.stripprefix.prefixes=${ADMIN_PREFIX:-/server-manager}/portainer"
+      - "traefik.http.routers.portainer.observability.accessLogs=false"
+      - "traefik.http.routers.portainer.middlewares=auth,portainer-stripprefix"
+      - "traefik.http.middlewares.portainer-stripprefix.stripprefix.prefixes=${ADMIN_PREFIX:-/server-manager}/portainer"
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
       # - "traefik.http.routers.portainer.tls.certresolver=myzerossl"
       # - "traefik.http.routers.portainer.tls=true"
+
+    stop_grace_period: 0s
+
+  # Victorialogs: stores the traefik log and access log.
+  # Web UI: https://host/server-manager/victoria-logs/select/vmui/ (protected with the generic auth middleware, needs ./htpasswd)
+  victorialogs:
+    image: victoriametrics/victoria-logs:latest
+    restart: unless-stopped
+    command:
+      - "-retentionPeriod=${LOGS_RETENTION:-30d}"
+      - "-http.pathPrefix=${ADMIN_PREFIX:-/server-manager}/victoria-logs"
+    volumes:
+      - victorialogs:/victoria-logs-data
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.victorialogs.rule=Host(`${DOMAIN}`) && PathPrefix(`${ADMIN_PREFIX:-/server-manager}/victoria-logs`)"
+      - "traefik.http.routers.victorialogs.priority=100000"
+      - "traefik.http.routers.victorialogs.entrypoints=websecure"
+      - "traefik.http.routers.victorialogs.observability.accessLogs=false"
+      - "traefik.http.routers.victorialogs.middlewares=auth"
+      - "traefik.http.services.victorialogs.loadbalancer.server.port=9428"
+
+    networks:
+      - proxynet
+      - default
 
     stop_grace_period: 0s
 
@@ -178,7 +204,8 @@ services:
       - "traefik.http.routers.server-manager.rule=Host(`${DOMAIN}`) && (Path(`${ADMIN_PREFIX:-/server-manager}`) || Path(`${ADMIN_PREFIX:-/server-manager}/`))"
       - traefik.http.routers.server-manager.priority=100000
       - traefik.http.routers.server-manager.entrypoints=websecure
-      - traefik.http.routers.server-manager.middlewares=server-manager-page
+      - traefik.http.routers.server-manager.observability.accessLogs=false
+      - traefik.http.routers.server-manager.middlewares=auth,server-manager-page
       - traefik.http.middlewares.server-manager-page.replacepath.path=/server-manager.html
       - traefik.http.routers.server-manager.service=portal
 
@@ -220,6 +247,8 @@ volumes:
  traefik:
    driver: ${VOLUME_DRIVER-zfs}
  portainer:
+   driver: ${VOLUME_DRIVER-zfs}
+ victorialogs:
    driver: ${VOLUME_DRIVER-zfs}
 
 

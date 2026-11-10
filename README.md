@@ -40,6 +40,7 @@ The core stack contains these components:
   * It has a global blocklist. Bots and exploit scanners try to find some paths (`xmlrpc.php`, `.git`, `.env`, `*.log`, and other paths). For these paths, Traefik sends the request to the portal, which shows a blocked page (403).
 * **Portainer**: The Docker web GUI.
 * **Watchtower**: It updates the images each night at 04:00.
+* **VictoriaLogs**: It stores the Traefik log and the Traefik access log. Traefik sends the logs with OTLP. The default retention period is 30 days. To change it, set `LOGS_RETENTION` in `core/.env`.
 * **Portal**: An nginx server. It has these functions:
   * It shows the server manager overview page.
   * It shows a blocked page (403) for the paths in the global blocklist.
@@ -52,11 +53,13 @@ To start the core stack:
 1. Go to the `core` directory.
 2. Copy `.env-example` to `.env`.
 3. Edit `.env`. Set `DOMAIN` and the Let's Encrypt or ZeroSSL settings. These settings are the minimum.
-4. Run `docker compose up -d`.
+4. Create the `htpasswd` file. This file contains the users for the generic `auth` middleware. The `auth` middleware protects the admin interfaces. Other templates can also use this middleware to protect web interfaces. To create an entry, run `htpasswd -nbB admin 'password' >> htpasswd`.
+
+   If the `htpasswd` file does not exist, `docker compose up` stops with an error.
+5. Run `docker compose up -d`.
 
 ## Optional files
 
-* `htpasswd`: This file contains the users for the generic `auth` middleware. Other templates can use this middleware to protect web interfaces. To create an entry, run `htpasswd -nbB user 'password'`.
 * `certs.yml` and `certs/`: These files contain custom (non-ACME) certificates for Traefik.
 * `docker-compose.override.yml`: You can use this file to set a separate IP address as a landing page for reserved domains. Refer to `docker-compose.override.yml.example`.
 * `clean-expired-certs.sh`: This script removes expired certificates from the Traefik ACME storage.
@@ -68,6 +71,9 @@ All admin interfaces are under `ADMIN_PREFIX` on your `DOMAIN`. The default `ADM
 * Overview: <https://docker1.example.com/server-manager/>
 * Portainer: <https://docker1.example.com/server-manager/portainer/>
 * Traefik dashboard: <https://docker1.example.com/server-manager/traefik/dashboard/>
+* Logs (VictoriaLogs): <https://docker1.example.com/server-manager/victoria-logs/select/vmui/>
+
+The `auth` middleware protects the overview, Portainer, the Traefik dashboard and the logs. The users are in the `htpasswd` file.
 
 The overview page shows a list of all Traefik routers under the admin prefix. Thus, the admin interfaces of other stacks show on this page automatically.
 
