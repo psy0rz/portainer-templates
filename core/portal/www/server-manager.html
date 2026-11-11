@@ -22,12 +22,17 @@
     .footer-logo { display: block; width: 7em; height: auto; }
     header .logo { display: block; width: 18em; max-width: 100%; height: auto; }
     header h1 { margin: .5em 0 0; }
+    header { position: relative; }
+    .logout-button { position: absolute; top: 0; right: 0; padding: .4em .9em; background: var(--card); border-radius: 6px; color: var(--link); text-decoration: none; font-size: .9em; }
+    .logout-button:hover { text-decoration: underline; }
     .logo-wordmark-dark { fill: #12233A; }
     @media (prefers-color-scheme: dark) { .logo-wordmark-dark { fill: var(--text); } }
   </style>
 </head>
 <body>
   <header>
+    <!-- Ends the Authelia session. After the logout, Authelia shows its login page. -->
+    <a class="logout-button" href="/authelia/logout">Log out</a>
     <svg class="logo" role="img" aria-label="Alpinebox" viewBox="26 26 520 148" xmlns="http://www.w3.org/2000/svg">
       <defs>
       <clipPath id="left-face-clip">

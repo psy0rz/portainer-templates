@@ -39,6 +39,7 @@ The core stack contains these components:
   * It sends http requests to https.
   * It has a global blocklist. Bots and exploit scanners try to find some paths (`xmlrpc.php`, `.git`, `.env`, `*.log`, and other paths). For these paths, Traefik sends the request to the portal, which shows a blocked page (403).
 * **Portainer**: The Docker web GUI.
+* **Authelia**: The login portal for the admin interfaces. It is also the OpenID Connect provider for the Portainer login.
 * **Watchtower**: It updates the images each night at 04:00.
 * **VictoriaLogs**: It stores the Traefik log and the Traefik access log. Traefik sends the logs with OTLP. The default retention period is 30 days. To change it, set `LOGS_RETENTION` in `core/.env`.
 * **Portal**: An nginx server. It has these functions:
@@ -52,10 +53,23 @@ To start the core stack:
 
 1. Go to the `core` directory.
 2. Copy `.env-example` to `.env`.
-3. Edit `.env`. Set `DOMAIN` and the Let's Encrypt or ZeroSSL settings.
-4. In `.env`, set `ADMIN_PASSWORD_HASH`. To create the hash, run `htpasswd -nbB admin 'password' | cut -d ":" -f2`. Put the hash in single quotes. These settings are the minimum.
-5. Copy `certs.yml.example` to `certs.yml`. Traefik needs this file, also if you do not use custom certificates.
-6. Run `docker compose up -d`.
+3. Edit `.env`. Set `DOMAIN` and the Let's Encrypt or ZeroSSL settings. These settings are the minimum. `DOMAIN` must be a host name, not an IP address.
+4. Run `./setup.sh`. Type the admin password when the script asks for it.
+
+The setup script does these steps:
+
+* It copies `certs.yml.example` to `certs.yml` if `certs.yml` does not exist. Traefik needs this file, also if you do not use custom certificates.
+* It creates the Authelia secrets in `authelia/secrets/`.
+* It writes the user `admin` to `authelia/users_database.yml`. It overwrites the file each time.
+* It starts the stack with `docker compose up -d`.
+* It resets the password of the Portainer internal admin to a random password with the `portainer/helper-reset-password` image. This stops Portainer for a few seconds. The script uses the password one time to configure Portainer, and does not store it.
+* It configures Portainer: the login through Authelia (OAuth) and the app templates URL.
+
+You can run `./setup.sh` again. It keeps the existing secrets. Run it again after you change `DOMAIN`.
+
+To change the admin password, run `./setup.sh` and type the new password.
+
+CAUTION: Do not edit `authelia/users_database.yml`. `setup.sh` overwrites it.
 
 ## Optional files
 
@@ -72,23 +86,36 @@ All admin interfaces are under `ADMIN_PREFIX` on your `DOMAIN`. The default `ADM
 * Traefik dashboard: <https://docker1.example.com/server-manager/traefik/dashboard/>
 * Logs (VictoriaLogs): <https://docker1.example.com/server-manager/victoria-logs/select/vmui/>
 
-The generic `auth` middleware protects the overview, Portainer, the Traefik dashboard and the logs. Other templates can also use this middleware to protect web interfaces. The user is `admin`. `ADMIN_PASSWORD_HASH` in `.env` sets the password.
+The generic `auth` middleware protects the overview, Portainer, the Traefik dashboard and the logs. Other templates can also use this middleware to protect web interfaces. The `auth` middleware sends you to the Authelia login page at `https://DOMAIN/authelia/`. The user is `admin`. `setup.sh` sets the password. After the login, Authelia keeps the session in a cookie. The session stays for 1 day without activity, and for a maximum of 7 days. Select "Remember me" to keep it for 1 month. Authelia keeps the sessions in memory. After a restart of Authelia (for example after an image update by Watchtower), you must log in again. To log out, click "Log out" on the overview page.
+
+Authelia is not under `ADMIN_PREFIX`, because Authelia accepts only a path with one segment of letters and digits.
+
+For two-factor authentication (a TOTP app), set `ADMIN_AUTH_POLICY=two_factor` in `.env` and run `./setup.sh` again. There is no mail server for Authelia, so Authelia writes the registration code to a file. To read the code, run `docker compose exec authelia cat /data/notification.txt`.
 
 The overview page shows a list of all Traefik routers under the admin prefix. Thus, the admin interfaces of other stacks show on this page automatically.
 
-Portainer has its own login. On a new installation, the Portainer admin password is the same as the `auth` password. Portainer uses `ADMIN_PASSWORD_HASH` only when it creates a new data volume. For an existing Portainer, change the password in the Portainer web interface.
+Portainer uses Authelia for its login. In Portainer, click "Login with OAuth". If you are logged in to Authelia, you do not type the password again.
 
-CAUTION: Change the password after the first login.
+Nobody knows the password of the Portainer internal admin. If Authelia does not work and you must use the internal login, get a new password:
+
+1. Run `docker compose stop portainer`.
+2. Run `docker run --rm --volumes-from $(docker compose ps -aq portainer) portainer/helper-reset-password`. The command shows the new password.
+3. Run `docker compose start portainer`.
+4. Log in to Portainer as `admin` with the new password.
 
 # Use the templates
+
+`setup.sh` sets the App templates URL in Portainer. To set it manually:
 
 1. In Portainer, go to Settings.
 2. In the App templates field, enter this URL:
 
    <https://raw.githubusercontent.com/psy0rz/portainer-templates/main/templates.json>
 
-3. Go to App templates.
-4. Create a stack.
+To use the templates:
+
+1. In Portainer, go to App templates.
+2. Create a stack.
 
 These templates are available:
 

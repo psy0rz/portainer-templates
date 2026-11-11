@@ -9,11 +9,14 @@
 #   Traefik dashboard: https://host/server-manager/traefik/dashboard/
 #   Portainer:         https://host/server-manager/portainer/
 #   Logs:              https://host/server-manager/victoria-logs/select/vmui/
+# Login (Authelia):    https://host/authelia/
+#
+# Run ./setup.sh the first time. Do not use "docker compose up" first: Authelia needs the files that setup.sh creates.
 
 
 services:
   traefik:
-    image: "traefik:v3.7"
+    image: "traefik:v3"
     restart: unless-stopped
 
     command:
@@ -82,8 +85,13 @@ services:
      - ./certs:/certs:ro
 
     networks:
-      - proxynet
-      - default
+      proxynet:
+      default:
+        # Portainer gets the OAuth tokens from Authelia through https://DOMAIN/authelia/ (Authelia accepts
+        # only https). With this alias, DOMAIN points to traefik inside the network, so Portainer
+        # does not need a route to the public IP address of the server.
+        aliases:
+          - ${DOMAIN}
 
     labels:
       # Traefik status page
@@ -103,27 +111,29 @@ services:
       # redirect all http to https
       - traefik.http.routers.http-catchall.rule=hostregexp(`.*`)
       - traefik.http.routers.http-catchall.entrypoints=web
+      - traefik.http.routers.http-catchall.observability.accessLogs=false
       - traefik.http.routers.http-catchall.middlewares=redirect-to-https
       - traefik.http.routers.http-catchall.priority=-1
       - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
-
-      # Generic auth used to protect some webinterfaces
-      # Use:       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.middlewares=auth
-      # User admin, with the same password hash as the portainer admin (ADMIN_PASSWORD_HASH in .env).
-      - "traefik.http.middlewares.auth.basicauth.users=admin:${ADMIN_PASSWORD_HASH:?Set ADMIN_PASSWORD_HASH in .env}"
-
-
 
     stop_grace_period: 0s
 
 
   portainer:
     image: portainer/portainer-ce:latest
-    command: -H unix:///var/run/docker.sock --log-level ${PORTAINER_LOG_LEVEL:-DEBUG} --base-url ${ADMIN_PREFIX:-/server-manager}/portainer/ --admin-password ${ADMIN_PASSWORD_HASH:?Set ADMIN_PASSWORD_HASH in .env}
+    # --admin-password-file: Portainer creates the first admin with this random password (made by setup.sh).
+    # setup.sh resets the admin password each time it runs, so this file is only used at the first start.
+    command: -H unix:///var/run/docker.sock --log-level ${PORTAINER_LOG_LEVEL:-DEBUG} --base-url ${ADMIN_PREFIX:-/server-manager}/portainer/ --admin-password-file /run/portainer_initial_admin_password
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer:/data
+      - type: bind
+        source: ./authelia/secrets/portainer_initial_admin_password
+        target: /run/portainer_initial_admin_password
+        read_only: true
+        bind:
+          create_host_path: false
 
     labels:
       - "traefik.enable=true"
@@ -137,6 +147,49 @@ services:
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
       # - "traefik.http.routers.portainer.tls.certresolver=myzerossl"
       # - "traefik.http.routers.portainer.tls=true"
+
+    stop_grace_period: 0s
+
+  # Authelia: login portal on https://host/authelia/.
+  # (Authelia accepts only one path segment with only letters and digits, so it cannot run under ADMIN_PREFIX.)
+  # - It supplies the generic "auth" middleware (traefik forward auth) for the admin interfaces.
+  # - It is the OpenID Connect provider for the Portainer login ("Login with OAuth").
+  # Config: ./authelia/configuration.yml. Run ./setup.sh first: it creates the users file and the secrets.
+  authelia:
+    image: authelia/authelia:4
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN}
+      ADMIN_PREFIX: ${ADMIN_PREFIX:-/server-manager}
+      ADMIN_AUTH_POLICY: ${ADMIN_AUTH_POLICY:-one_factor}
+      X_AUTHELIA_CONFIG: /config/configuration.yml
+      X_AUTHELIA_CONFIG_FILTERS: template
+      AUTHELIA_IDENTITY_VALIDATION_RESET_PASSWORD_JWT_SECRET_FILE: /config/secrets/jwt_secret
+      AUTHELIA_SESSION_SECRET_FILE: /config/secrets/session_secret
+      AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE: /config/secrets/storage_encryption_key
+      AUTHELIA_IDENTITY_PROVIDERS_OIDC_HMAC_SECRET_FILE: /config/secrets/oidc_hmac_secret
+    volumes:
+      - ./authelia:/config:ro
+      - authelia:/data
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.authelia.rule=Host(`${DOMAIN}`) && PathPrefix(`/authelia`)"
+      - "traefik.http.routers.authelia.priority=100000"
+      - "traefik.http.routers.authelia.entrypoints=websecure"
+      - "traefik.http.routers.authelia.observability.accessLogs=false"
+      - "traefik.http.services.authelia.loadbalancer.server.port=9091"
+
+      # Generic auth used to protect some webinterfaces
+      # Use:       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.middlewares=auth
+      # Users are in ./authelia/users_database.yml. To change the admin password, run ./setup.sh.
+      - "traefik.http.middlewares.auth.forwardauth.address=http://authelia:9091/authelia/api/authz/forward-auth"
+      - "traefik.http.middlewares.auth.forwardauth.trustForwardHeader=true"
+      - "traefik.http.middlewares.auth.forwardauth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Email,Remote-Name"
+
+    networks:
+      - proxynet
+      - default
 
     stop_grace_period: 0s
 
@@ -194,6 +247,7 @@ services:
 
       - traefik.http.routers.https-catchall.rule=hostregexp(`.*`)
       - traefik.http.routers.https-catchall.entrypoints=websecure
+      - traefik.http.routers.https-catchall.observability.accessLogs=false
       # - traefik.http.routers.https-catchall.tls=true
       - traefik.http.routers.https-catchall.priority=-1
       - traefik.http.routers.https-catchall.service=portal
@@ -218,6 +272,7 @@ services:
       - traefik.http.routers.blocked-paths.rule=PathRegexp(`/(xmlrpc\.php|\.(git|svn|hg|bzr|aws|ssh)(/.*)?|\.env(\.[^/]*)?|\.ht(access|passwd)|\.DS_Store|wp-config\.php\.[^/]+|[^/]*\.log)$$`)
       - traefik.http.routers.blocked-paths.priority=1000
       - traefik.http.routers.blocked-paths.entrypoints=websecure
+      - traefik.http.routers.blocked-paths.observability.accessLogs=false
       - traefik.http.routers.blocked-paths.tls=true
       - traefik.http.routers.blocked-paths.middlewares=blocked-paths-page
       - traefik.http.middlewares.blocked-paths-page.replacepath.path=/blocked
@@ -247,6 +302,8 @@ volumes:
  portainer:
    driver: ${VOLUME_DRIVER-zfs}
  victorialogs:
+   driver: ${VOLUME_DRIVER-zfs}
+ authelia:
    driver: ${VOLUME_DRIVER-zfs}
 
 

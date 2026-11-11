@@ -1,0 +1,97 @@
+# Authelia: login portal for the admin interfaces (traefik forward auth) and OpenID Connect provider
+# for the Portainer login.
+#
+# Runs on https://DOMAIN/authelia/.
+# Authelia accepts only one path segment with only letters and digits, so it cannot run under ADMIN_PREFIX.
+#
+# This file uses the Authelia template filter (X_AUTHELIA_CONFIG_FILTERS=template in docker-compose.yml).
+# The "env" function gives the value of an environment variable of the authelia container.
+# The "secret" function gives the content of a file.
+# CAUTION: The template filter also reads the comments. Do not put template syntax in comments.
+#
+# setup.sh creates these files. Do not commit them:
+#   users_database.yml     The user admin. setup.sh overwrites it each time it runs.
+#   secrets/*              Random secrets, the OpenID Connect signing key and the Portainer client secret.
+
+server:
+  address: 'tcp://:9091/authelia'
+  endpoints:
+    authz:
+      # Traefik forward auth. Only the session cookie, not the "Authorization: Basic" header (the default).
+      # With the Basic header, browsers that still have the password of the old basicauth middleware show
+      # login popups, and their failed tries ban the user.
+      forward-auth:
+        implementation: 'ForwardAuth'
+        authn_strategies:
+          - name: 'CookieSession'
+
+log:
+  level: 'info'
+
+theme: 'auto'
+
+authentication_backend:
+  # There is no mail server for Authelia. To change the admin password, run setup.sh again.
+  password_reset:
+    disable: true
+  password_change:
+    disable: true
+  file:
+    path: '/config/users_database.yml'
+    watch: true
+
+# Applies to all routers with the "auth" middleware. ADMIN_AUTH_POLICY in .env: one_factor or two_factor.
+access_control:
+  default_policy: '{{ env "ADMIN_AUTH_POLICY" }}'
+
+session:
+  # Long sessions: the admin must not log in again all the time.
+  # "Remember me" on the login page keeps the session for remember_me.
+  inactivity: '1d'
+  expiration: '7d'
+  remember_me: '1M'
+  cookies:
+    - domain: '{{ env "DOMAIN" }}'
+      authelia_url: 'https://{{ env "DOMAIN" }}/authelia'
+      # After a login without a target page (for example after "Log out"), go to the server manager overview.
+      default_redirection_url: 'https://{{ env "DOMAIN" }}{{ env "ADMIN_PREFIX" }}/'
+
+storage:
+  local:
+    path: '/data/db.sqlite3'
+
+# There is no mail server. Authelia writes the messages (for example the code to register a TOTP device)
+# to this file. Read it with:
+#   docker compose exec authelia cat /data/notification.txt
+notifier:
+  filesystem:
+    filename: '/data/notification.txt'
+
+identity_providers:
+  oidc:
+    jwks:
+      - key: {{ secret "/config/secrets/oidc_jwks_private_key.pem" | mindent 10 "|" | msquote }}
+    clients:
+      - client_id: 'portainer'
+        client_name: 'Portainer'
+        client_secret: '{{ secret "/config/secrets/portainer_client_secret.digest" }}'
+        public: false
+        authorization_policy: '{{ env "ADMIN_AUTH_POLICY" }}'
+        # No consent page: the admin goes straight back to Portainer.
+        consent_mode: 'implicit'
+        require_pkce: false
+        pkce_challenge_method: ''
+        redirect_uris:
+          - 'https://{{ env "DOMAIN" }}{{ env "ADMIN_PREFIX" }}/portainer/'
+        scopes:
+          - 'openid'
+          - 'profile'
+          - 'groups'
+          - 'email'
+        response_types:
+          - 'code'
+        grant_types:
+          - 'authorization_code'
+        access_token_signed_response_alg: 'none'
+        userinfo_signed_response_alg: 'none'
+        token_endpoint_auth_method: 'client_secret_post'
