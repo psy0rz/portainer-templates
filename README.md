@@ -54,11 +54,12 @@ To start the core stack:
 2. Copy `.env-example` to `.env`.
 3. Edit `.env`. Set `DOMAIN` and the Let's Encrypt or ZeroSSL settings.
 4. In `.env`, set `ADMIN_PASSWORD_HASH`. To create the hash, run `htpasswd -nbB admin 'password' | cut -d ":" -f2`. Put the hash in single quotes. These settings are the minimum.
-5. Run `docker compose up -d`.
+5. Copy `certs.yml.example` to `certs.yml`. Traefik needs this file, also if you do not use custom certificates.
+6. Run `docker compose up -d`.
 
 ## Optional files
 
-* `certs.yml` and `certs/`: These files contain custom (non-ACME) certificates for Traefik.
+* `certs/`: This directory contains custom (non-ACME) certificates for Traefik. Add them to `certs.yml`.
 * `docker-compose.override.yml`: You can use this file to set a separate IP address as a landing page for reserved domains. Refer to `docker-compose.override.yml.example`.
 * `clean-expired-certs.sh`: This script removes expired certificates from the Traefik ACME storage.
 

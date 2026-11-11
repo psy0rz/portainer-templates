@@ -71,14 +71,19 @@ services:
     volumes:
      - "/var/run/docker.sock:/var/run/docker.sock:ro"
      - traefik:/storage
-     - ./certs.yml:/etc/traefik/certs.yml:ro
+     # Long syntax with create_host_path: false, so compose stops with an error if certs.yml does not exist.
+     # (The short syntax creates an empty directory instead.)
+     - type: bind
+       source: ./certs.yml
+       target: /etc/traefik/certs.yml
+       read_only: true
+       bind:
+         create_host_path: false
      - ./certs:/certs:ro
 
     networks:
       - proxynet
       - default
-
-    hostname: ${DOMAIN}      
 
     labels:
       # Traefik status page
