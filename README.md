@@ -37,9 +37,16 @@ The core stack contains these components:
 * **Traefik**: A reverse proxy. Traefik has these functions:
   * It supplies automatic SSL.
   * It sends http requests to https.
-  * It has a global blocklist. Bots and exploit scanners try to find some paths (`xmlrpc.php`, `.git`, `.env`, `*.log`, and other paths). For these paths, Traefik sends the request to the portal, which shows a blocked page (403).
+  * It has a global blocklist. Bots and exploit scanners try to find some paths (`xmlrpc.php`, `.git`, `.env`, `*.log`, and other paths). For these paths, Traefik sends the request to the portal, which shows a blocked page (403). Traefik writes these requests to the access log, so CrowdSec can ban the scanners.
 * **Portainer**: The Docker web GUI.
 * **Authelia**: The login portal for the admin interfaces. It is also the OpenID Connect provider for the Portainer login.
+* **CrowdSec** (community edition): It reads the logs of Traefik and Authelia and finds attacks (for example scans, exploits and brute force logins). It bans the IP addresses of the attackers. It also uses the community blocklist from CrowdSec. The CrowdSec bouncer plugin in Traefik blocks the banned IP addresses on all https sites (status 403). Some notes:
+  * The log sources are in `core/crowdsec/acquis.yaml`. CrowdSec reads the logs of all containers with the label `crowdsec.enable=true`. The label `crowdsec.labels.type` selects the parser.
+  * If CrowdSec stops, Traefik lets all requests through.
+  * Traefik downloads the plugin when it starts. If the download fails, the https sites do not work.
+  * Private IP addresses are never banned.
+  * To see the bans, run `docker compose exec crowdsec cscli decisions list`. To remove a ban, run `docker compose exec crowdsec cscli decisions delete --ip <ip address>`.
+  * To connect CrowdSec to the CrowdSec console, set `CROWDSEC_ENROLL_KEY` in `core/.env`.
 * **Watchtower**: It updates the images each night at 04:00.
 * **VictoriaLogs**: It stores the Traefik log and the Traefik access log. Traefik sends the logs with OTLP. The default retention period is 30 days. To change it, set `LOGS_RETENTION` in `core/.env`.
 * **Portal**: An nginx server. It has these functions:
@@ -54,12 +61,13 @@ To start the core stack:
 1. Go to the `core` directory.
 2. Copy `.env-example` to `.env`.
 3. Edit `.env`. Set `DOMAIN` and the Let's Encrypt or ZeroSSL settings. These settings are the minimum. `DOMAIN` must be a host name, not an IP address.
-4. Run `./setup.sh`. Type the admin password when the script asks for it.
+4. Run `./setup.sh`. Type the admin password when the script asks for it. You can also give the password as an argument: `./setup.sh 'password'`. CAUTION: Then the password goes into the shell history and shows in the process list.
 
 The setup script does these steps:
 
 * It copies `certs.yml.example` to `certs.yml` if `certs.yml` does not exist. Traefik needs this file, also if you do not use custom certificates.
 * It creates the Authelia secrets in `authelia/secrets/`.
+* It creates the CrowdSec bouncer key in `crowdsec/secrets/`.
 * It writes the user `admin` to `authelia/users_database.yml`. It overwrites the file each time.
 * It starts the stack with `docker compose up -d`.
 * It resets the password of the Portainer internal admin to a random password with the `portainer/helper-reset-password` image. This stops Portainer for a few seconds. The script uses the password one time to configure Portainer, and does not store it.

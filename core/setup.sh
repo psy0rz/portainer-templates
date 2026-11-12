@@ -1,13 +1,17 @@
 #!/bin/sh
-# Sets up the core stack: Authelia (login for the admin interfaces) and Portainer.
+# Sets up the core stack: Authelia (login for the admin interfaces), Portainer and CrowdSec.
 #
 # Run it the first time, and again to change the admin password or after you change DOMAIN in .env.
 # It is safe to run it again: it keeps the existing secrets.
 #
+# Usage: ./setup.sh [admin password]
+# Without the argument, the script asks for the admin password.
+# CAUTION: A password in the argument goes into the shell history and shows in the process list.
+#
 # What it does:
 #  1. Creates .env and certs.yml from the examples if they do not exist.
-#  2. Asks for the admin password and writes authelia/users_database.yml (overwrites the file).
-#  3. Creates the secrets in authelia/secrets/ (only the ones that do not exist).
+#  2. Gets the admin password (argument or question) and writes authelia/users_database.yml (overwrites the file).
+#  3. Creates the secrets in authelia/secrets/ and crowdsec/secrets/ (only the ones that do not exist).
 #  4. Starts the stack (docker compose up -d).
 #  5. Resets the Portainer admin password to a random password (portainer/helper-reset-password),
 #     and uses it once to configure Portainer: login with OAuth through Authelia, and the app templates URL.
@@ -22,6 +26,7 @@ CURL_IMAGE=curlimages/curl:8.11.1
 PORTAINER_RESET_PASSWORD_IMAGE=portainer/helper-reset-password:latest
 TEMPLATES_URL=https://raw.githubusercontent.com/psy0rz/portainer-templates/main/templates.json
 SECRETS_DIR=authelia/secrets
+CROWDSEC_SECRETS_DIR=crowdsec/secrets
 
 fail() {
     echo "ERROR: $*" >&2
@@ -39,9 +44,14 @@ read_env_value() {
 
 # Writes 64 random letters and digits to authelia/secrets/<name> if the file does not exist.
 create_random_secret() {
-    [ -s "$SECRETS_DIR/$1" ] && return 0
-    LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 64 > "$SECRETS_DIR/$1"
-    echo "Created $SECRETS_DIR/$1"
+    create_random_secret_file "$SECRETS_DIR/$1"
+}
+
+# Writes 64 random letters and digits to the file <path> if the file does not exist.
+create_random_secret_file() {
+    [ -s "$1" ] && return 0
+    LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 64 > "$1"
+    echo "Created $1"
 }
 
 # Calls the Portainer API from inside the network namespace of the portainer container.
@@ -99,8 +109,12 @@ esac
 
 ### 2. Admin password and Authelia users file
 
-printf 'New admin password: '
-IFS= read -r admin_password
+if [ $# -ge 1 ]; then
+    admin_password=$1
+else
+    printf 'New admin password: '
+    IFS= read -r admin_password
+fi
 [ -n "$admin_password" ] || fail "The password is empty."
 
 admin_password_hash=$(authelia_cli crypto hash generate argon2 --password "$admin_password" | sed -n 's/^Digest: //p')
@@ -147,6 +161,14 @@ if [ ! -s "$SECRETS_DIR/portainer_client_secret.digest" ]; then
 fi
 
 chmod 600 "$SECRETS_DIR"/*
+
+# CrowdSec registers the bouncer "traefik" with this key. The traefik bouncer plugin uses the same key.
+# CrowdSec registers the bouncer only if it does not exist. If you delete this file, also delete the
+# bouncer: docker compose exec crowdsec cscli bouncers delete traefik
+mkdir -p "$CROWDSEC_SECRETS_DIR"
+chmod 700 "$CROWDSEC_SECRETS_DIR"
+create_random_secret_file "$CROWDSEC_SECRETS_DIR/bouncer_key_traefik"
+chmod 600 "$CROWDSEC_SECRETS_DIR"/*
 
 
 ### 4. Start the stack

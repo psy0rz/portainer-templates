@@ -1,0 +1,7 @@
+# CrowdSec reads the logs of the docker containers that have the label crowdsec.enable=true.
+# The label crowdsec.labels.type selects the parser, for example:
+#   - crowdsec.enable=true
+#   - crowdsec.labels.type=traefik
+# In the core stack, traefik and authelia have these labels.
+source: docker
+use_container_labels: true

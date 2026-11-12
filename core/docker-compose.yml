@@ -1,5 +1,5 @@
 # Core environment to use the other templates with.
-# Its a treafik + portainer + watchtower + victorialogs stack.
+# Its a treafik + portainer + watchtower + victorialogs + crowdsec stack.
 # Use on Alpinebox (https://github.com/psy0rz/alpinebox) with ZFS docker volume support.
 
 # https://raw.githubusercontent.com/psy0rz/portainer-templates/main/templates.json
@@ -11,7 +11,7 @@
 #   Logs:              https://host/server-manager/victoria-logs/select/vmui/
 # Login (Authelia):    https://host/authelia/
 #
-# Run ./setup.sh the first time. Do not use "docker compose up" first: Authelia needs the files that setup.sh creates.
+# Run ./setup.sh the first time. Do not use "docker compose up" first: Authelia and CrowdSec need the files that setup.sh creates.
 
 
 services:
@@ -59,6 +59,13 @@ services:
       - "--accesslog.fields.headers.names.User-Agent=keep"
       - "--accesslog.fields.headers.names.Referer=keep"
 
+      # CrowdSec bouncer plugin. The "crowdsec" middleware (see the labels) protects all routers on websecure.
+      # Traefik downloads the plugin at startup. If the download fails, the middleware does not exist
+      # and the routers on websecure do not work.
+      - "--experimental.plugins.crowdsec-bouncer.modulename=github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin"
+      - "--experimental.plugins.crowdsec-bouncer.version=v1.8.1"
+      - "--entrypoints.websecure.http.middlewares=crowdsec@docker"
+
       # custom certs
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
@@ -83,6 +90,13 @@ services:
        bind:
          create_host_path: false
      - ./certs:/certs:ro
+     # Bouncer API key for the CrowdSec local API (made by setup.sh).
+     - type: bind
+       source: ./crowdsec/secrets/bouncer_key_traefik
+       target: /run/secrets/crowdsec_bouncer_key
+       read_only: true
+       bind:
+         create_host_path: false
 
     networks:
       proxynet:
@@ -115,6 +129,23 @@ services:
       - traefik.http.routers.http-catchall.middlewares=redirect-to-https
       - traefik.http.routers.http-catchall.priority=-1
       - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
+
+      # CrowdSec bouncer middleware, used on the websecure entrypoint. It is defined here and not on the
+      # crowdsec container, so it exists also when the crowdsec container is stopped.
+      # Stream mode: the plugin gets the list of banned IP addresses from CrowdSec every 60 seconds.
+      # updateMaxFailure=-1 and streamStartupBlock=false: when CrowdSec is not available, traefik lets
+      # all requests through (instead of blocking all websites).
+      - "traefik.http.middlewares.crowdsec.plugin.crowdsec-bouncer.enabled=true"
+      - "traefik.http.middlewares.crowdsec.plugin.crowdsec-bouncer.crowdsecMode=stream"
+      - "traefik.http.middlewares.crowdsec.plugin.crowdsec-bouncer.crowdsecLapiHost=crowdsec:8080"
+      - "traefik.http.middlewares.crowdsec.plugin.crowdsec-bouncer.crowdsecLapiKeyFile=/run/secrets/crowdsec_bouncer_key"
+      - "traefik.http.middlewares.crowdsec.plugin.crowdsec-bouncer.updateIntervalSeconds=60"
+      - "traefik.http.middlewares.crowdsec.plugin.crowdsec-bouncer.updateMaxFailure=-1"
+      - "traefik.http.middlewares.crowdsec.plugin.crowdsec-bouncer.streamStartupBlock=false"
+
+      # CrowdSec reads the traefik log and access log from stdout (see crowdsec/acquis.yaml).
+      - "crowdsec.enable=true"
+      - "crowdsec.labels.type=traefik"
 
     stop_grace_period: 0s
 
@@ -187,6 +218,10 @@ services:
       - "traefik.http.middlewares.auth.forwardauth.trustForwardHeader=true"
       - "traefik.http.middlewares.auth.forwardauth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Email,Remote-Name"
 
+      # CrowdSec reads the Authelia log and bans IP addresses with too many failed logins.
+      - "crowdsec.enable=true"
+      - "crowdsec.labels.type=authelia"
+
     networks:
       - proxynet
       - default
@@ -216,6 +251,33 @@ services:
     networks:
       - proxynet
       - default
+
+    stop_grace_period: 0s
+
+  # CrowdSec (community edition): reads the logs of traefik and authelia, detects attacks and bans
+  # the IP addresses. The traefik bouncer plugin blocks the banned IP addresses (status 403).
+  # CrowdSec also gets the community blocklist from the CrowdSec central API.
+  # Log sources: ./crowdsec/acquis.yaml. Commands: docker compose exec crowdsec cscli --help
+  crowdsec:
+    image: crowdsecurity/crowdsec:latest
+    restart: unless-stopped
+    environment:
+      COLLECTIONS: "crowdsecurity/traefik crowdsecurity/http-cve LePresidente/authelia"
+      # Optional: connect to the CrowdSec console (https://app.crowdsec.net).
+      ENROLL_KEY: ${CROWDSEC_ENROLL_KEY:-}
+      ENROLL_INSTANCE_NAME: ${DOMAIN}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./crowdsec/acquis.yaml:/etc/crowdsec/acquis.d/docker.yaml:ro
+      # CrowdSec registers the bouncer "traefik" with this key at startup (made by setup.sh).
+      - type: bind
+        source: ./crowdsec/secrets/bouncer_key_traefik
+        target: /run/secrets/bouncer_key_traefik
+        read_only: true
+        bind:
+          create_host_path: false
+      - crowdsec-config:/etc/crowdsec
+      - crowdsec-data:/var/lib/crowdsec/data
 
     stop_grace_period: 0s
 
@@ -272,7 +334,7 @@ services:
       - traefik.http.routers.blocked-paths.rule=PathRegexp(`/(xmlrpc\.php|\.(git|svn|hg|bzr|aws|ssh)(/.*)?|\.env(\.[^/]*)?|\.ht(access|passwd)|\.DS_Store|wp-config\.php\.[^/]+|[^/]*\.log)$$`)
       - traefik.http.routers.blocked-paths.priority=1000
       - traefik.http.routers.blocked-paths.entrypoints=websecure
-      - traefik.http.routers.blocked-paths.observability.accessLogs=false
+      # Access log stays on: CrowdSec reads these requests and bans scanners (http-sensitive-files, http-probing).
       - traefik.http.routers.blocked-paths.tls=true
       - traefik.http.routers.blocked-paths.middlewares=blocked-paths-page
       - traefik.http.middlewares.blocked-paths-page.replacepath.path=/blocked
@@ -304,6 +366,10 @@ volumes:
  victorialogs:
    driver: ${VOLUME_DRIVER-zfs}
  authelia:
+   driver: ${VOLUME_DRIVER-zfs}
+ crowdsec-config:
+   driver: ${VOLUME_DRIVER-zfs}
+ crowdsec-data:
    driver: ${VOLUME_DRIVER-zfs}
 
 
