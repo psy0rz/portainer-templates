@@ -33,6 +33,8 @@ services:
       - "--entryPoints.websecure.http.encodedCharacters.allowEncodedSlash=true"
       - "--entrypoints.websecure.http.tls.certresolver=${DEFAULT_ACME_PROVIDER}"
       - "--entryPoints.landing.address=:81"
+      # Default network to reach the containers. The core containers are not on proxynet: they have the label
+      # traefik.docker.network=core-internal.
       - "--providers.docker.network=proxynet"
       - "--providers.docker.defaultRule="
       - "--certificatesresolvers.letsencrypt.acme.email=${LETSENCRYPT_EMAIL}"
@@ -173,6 +175,7 @@ services:
 
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=core-internal"
       - "traefik.http.routers.portainer.rule=Host(`${DOMAIN}`) && PathPrefix(`${ADMIN_PREFIX:-/server-manager}/portainer`)"
       - "traefik.http.routers.portainer.priority=100000"
 
@@ -210,6 +213,7 @@ services:
 
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=core-internal"
       - "traefik.http.routers.authelia.rule=Host(`${DOMAIN}`) && PathPrefix(`/authelia`)"
       - "traefik.http.routers.authelia.priority=100000"
       - "traefik.http.routers.authelia.entrypoints=websecure"
@@ -227,10 +231,6 @@ services:
       - "crowdsec.enable=true"
       - "crowdsec.labels.type=authelia"
 
-    networks:
-      - proxynet
-      - default
-
     stop_grace_period: 0s
 
   # Victorialogs: stores the traefik log and access log.
@@ -246,16 +246,13 @@ services:
 
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=core-internal"
       - "traefik.http.routers.victorialogs.rule=Host(`${DOMAIN}`) && PathPrefix(`${ADMIN_PREFIX:-/server-manager}/victoria-logs`)"
       - "traefik.http.routers.victorialogs.priority=100000"
       - "traefik.http.routers.victorialogs.entrypoints=websecure"
       - "traefik.http.routers.victorialogs.observability.accessLogs=false"
       - "traefik.http.routers.victorialogs.middlewares=auth"
       - "traefik.http.services.victorialogs.loadbalancer.server.port=9428"
-
-    networks:
-      - proxynet
-      - default
 
     stop_grace_period: 0s
 
@@ -316,16 +313,13 @@ services:
 
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=core-internal"
       - "traefik.http.routers.crowdsec-web-ui.rule=Host(`${DOMAIN}`) && PathPrefix(`${ADMIN_PREFIX:-/server-manager}/crowdsec`)"
       - "traefik.http.routers.crowdsec-web-ui.priority=100000"
       - "traefik.http.routers.crowdsec-web-ui.entrypoints=websecure"
       - "traefik.http.routers.crowdsec-web-ui.observability.accessLogs=false"
       - "traefik.http.routers.crowdsec-web-ui.middlewares=auth"
       - "traefik.http.services.crowdsec-web-ui.loadbalancer.server.port=3000"
-
-    networks:
-      - proxynet
-      - default
 
     stop_grace_period: 0s
 
@@ -352,6 +346,7 @@ services:
 
     labels:
       - traefik.enable=true
+      - "traefik.docker.network=core-internal"
       # catch all for when containers are down for maintanance:
       - traefik.http.services.portal.loadbalancer.server.port=8080
 
@@ -392,10 +387,6 @@ services:
     stop_grace_period: 0s
 
 
-    networks:
-      - proxynet
-      - default
-
   # templates:
   #   image: nginx:alpine
   #   volumes:
@@ -403,8 +394,14 @@ services:
 
 
 networks:
+  # Shared with the app stacks. Only traefik of the core stack is on this network: a hacked app container
+  # must not be able to connect to the core containers directly (without traefik and the auth middleware).
   proxynet:
     name: proxynet
+  # Network of the core stack. Traefik reaches the other core containers on this network.
+  # Fixed name, because the label traefik.docker.network=core-internal refers to it.
+  default:
+    name: core-internal
 
 volumes:
  traefik:
