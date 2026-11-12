@@ -265,7 +265,10 @@ services:
     image: crowdsecurity/crowdsec:latest
     restart: unless-stopped
     environment:
-      COLLECTIONS: "crowdsecurity/traefik crowdsecurity/http-cve LePresidente/authelia"
+      # Installed at each start, in addition to the collections that are already installed.
+      # To remove a collection, remove it here and run: docker compose exec crowdsec cscli collections remove <name>
+      # wordpress and magento use the traefik access log, so they need no extra log source.
+      COLLECTIONS: "crowdsecurity/traefik crowdsecurity/http-cve LePresidente/authelia crowdsecurity/wordpress crowdsecurity/magento"
       # Used in crowdsec/acquis.yaml for the victorialogs url.
       ADMIN_PREFIX: ${ADMIN_PREFIX:-/server-manager}
       # Optional: connect to the CrowdSec console (https://app.crowdsec.net).
