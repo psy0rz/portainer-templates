@@ -97,6 +97,13 @@ services:
        read_only: true
        bind:
          create_host_path: false
+     # Ban page for IP addresses that CrowdSec banned. setup.sh makes it from portal/www/blocked_by_crowdsec.html.
+     - type: bind
+       source: ./crowdsec/ban.html
+       target: /etc/traefik/crowdsec-ban.html
+       read_only: true
+       bind:
+         create_host_path: false
 
     networks:
       proxynet:
@@ -142,6 +149,7 @@ services:
       - "traefik.http.middlewares.crowdsec.plugin.crowdsec-bouncer.updateIntervalSeconds=60"
       - "traefik.http.middlewares.crowdsec.plugin.crowdsec-bouncer.updateMaxFailure=-1"
       - "traefik.http.middlewares.crowdsec.plugin.crowdsec-bouncer.streamStartupBlock=false"
+      - "traefik.http.middlewares.crowdsec.plugin.crowdsec-bouncer.banFilePath=/etc/traefik/crowdsec-ban.html"
 
       # CrowdSec reads the traefik log and access log from stdout (see crowdsec/acquis.yaml).
       - "crowdsec.enable=true"

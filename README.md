@@ -42,6 +42,7 @@ The core stack contains these components:
 * **Authelia**: The login portal for the admin interfaces. It is also the OpenID Connect provider for the Portainer login.
 * **CrowdSec** (community edition): It reads the logs of Traefik and Authelia and finds attacks (for example scans, exploits and brute force logins). It bans the IP addresses of the attackers. It also uses the community blocklist from CrowdSec. The CrowdSec bouncer plugin in Traefik blocks the banned IP addresses on all https sites (status 403). Some notes:
   * The log sources are in `core/crowdsec/acquis.yaml`. CrowdSec reads the logs of all containers with the label `crowdsec.enable=true`. The label `crowdsec.labels.type` selects the parser.
+  * A banned IP address gets a ban page (403) on all sites. The page shows the IP address and a code that starts with `crowdsec-`. Thus you can see the difference from the global blocklist page in complaints. The source of the page is `core/portal/www/blocked_by_crowdsec.html`. `setup.sh` adds `PORTAL_CONTACT_EMAIL` to it and writes the result to `core/crowdsec/ban.html`. After you change the page or `PORTAL_CONTACT_EMAIL`, run `./setup.sh` again.
   * If CrowdSec stops, Traefik lets all requests through.
   * Traefik downloads the plugin when it starts. If the download fails, the https sites do not work.
   * Private IP addresses are never banned.

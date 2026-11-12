@@ -12,6 +12,7 @@
 #  1. Creates .env and certs.yml from the examples if they do not exist.
 #  2. Gets the admin password (argument or question) and writes authelia/users_database.yml (overwrites the file).
 #  3. Creates the secrets in authelia/secrets/ and crowdsec/secrets/ (only the ones that do not exist).
+#     Writes the CrowdSec ban page crowdsec/ban.html (from portal/www/blocked_by_crowdsec.html).
 #  4. Starts the stack (docker compose up -d).
 #  5. Resets the Portainer admin password to a random password (portainer/helper-reset-password),
 #     and uses it once to configure Portainer: login with OAuth through Authelia, and the app templates URL.
@@ -171,6 +172,25 @@ create_random_secret_file "$CROWDSEC_SECRETS_DIR/bouncer_key_traefik"
 chmod 600 "$CROWDSEC_SECRETS_DIR"/*
 
 
+### CrowdSec ban page
+#
+# The traefik bouncer plugin reads crowdsec/ban.html as a Go template. Go templates use the same braces as the
+# contact email placeholder of the portal pages, so this script replaces the placeholder before traefik reads the file.
+# Traefik reads the file only at startup. Thus the script restarts traefik (after the start of the stack) if the file changed.
+
+ban_page_target=crowdsec/ban.html
+portal_contact_email=$(read_env_value PORTAL_CONTACT_EMAIL)
+# Escape the characters that have a special meaning in the sed replacement text.
+portal_contact_email_for_sed=$(printf '%s' "$portal_contact_email" | sed 's/[\\&|]/\\&/g')
+ban_page_rendered=$(sed "s|{{CONTACT_EMAIL}}|$portal_contact_email_for_sed|g" portal/www/blocked_by_crowdsec.html)
+ban_page_changed=false
+if [ ! -f "$ban_page_target" ] || [ "$(cat "$ban_page_target")" != "$ban_page_rendered" ]; then
+    printf '%s\n' "$ban_page_rendered" > "$ban_page_target"
+    ban_page_changed=true
+    echo "Created $ban_page_target"
+fi
+
+
 ### 4. Start the stack
 
 docker compose run --rm --no-deps -T authelia authelia validate-config \
@@ -179,6 +199,9 @@ docker compose run --rm --no-deps -T authelia authelia validate-config \
 docker compose up -d
 # Authelia reads configuration.yml and the secrets only at startup. Authelia keeps the sessions in memory, so this logs out all users.
 docker compose restart authelia
+if [ "$ban_page_changed" = true ]; then
+    docker compose restart traefik
+fi
 
 
 ### 5. Configure Portainer

@@ -1,1 +1,3 @@
 secrets/
+# Made by setup.sh from portal/www/blocked_by_crowdsec.html.
+ban.html
