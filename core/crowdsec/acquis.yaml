@@ -1,7 +1,26 @@
-# CrowdSec reads the logs of the docker containers that have the label crowdsec.enable=true.
+# Log sources of CrowdSec. CrowdSec replaces ${ADMIN_PREFIX} with the environment variable of the crowdsec container.
+
+# 1. Traefik access log, from victorialogs.
+# Traefik sends its logs only with OTLP to victorialogs, not to stdout. The message (_msg) of an access log
+# entry is a normal access log line (common log format), so the traefik parser can read it.
+# The query selects only the access log entries (they have the field RequestMethod), not the traefik log.
+# The url contains the victorialogs path prefix, because this data source ignores the "prefix" option in tail mode.
+# Tail mode reads only new entries: CrowdSec does not read the entries from the time it was stopped.
+source: victorialogs
+mode: tail
+url: http://victorialogs:9428${ADMIN_PREFIX}/victoria-logs
+query: 'service.name:=traefik RequestMethod:*'
+# The message ends with a newline. The traefik parser (crowdsecurity/traefik-logs 1.6 and later) anchors its
+# pattern at the end of the line ("ms$"), and "$" does not match before a newline. Thus remove the newline.
+transform: TrimSpace(evt.Line.Raw)
+labels:
+  type: traefik
+
+---
+# 2. Logs of the docker containers that have the label crowdsec.enable=true (stdout and stderr).
 # The label crowdsec.labels.type selects the parser, for example:
 #   - crowdsec.enable=true
-#   - crowdsec.labels.type=traefik
-# In the core stack, traefik and authelia have these labels.
+#   - crowdsec.labels.type=authelia
+# In the core stack, authelia has these labels.
 source: docker
 use_container_labels: true

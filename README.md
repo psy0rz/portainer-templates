@@ -41,13 +41,14 @@ The core stack contains these components:
 * **Portainer**: The Docker web GUI.
 * **Authelia**: The login portal for the admin interfaces. It is also the OpenID Connect provider for the Portainer login.
 * **CrowdSec** (community edition): It reads the logs of Traefik and Authelia and finds attacks (for example scans, exploits and brute force logins). It bans the IP addresses of the attackers. It also uses the community blocklist from CrowdSec. The CrowdSec bouncer plugin in Traefik blocks the banned IP addresses on all https sites (status 403). Some notes:
-  * The log sources are in `core/crowdsec/acquis.yaml`. CrowdSec reads the logs of all containers with the label `crowdsec.enable=true`. The label `crowdsec.labels.type` selects the parser.
+  * The log sources are in `core/crowdsec/acquis.yaml`. CrowdSec reads the Traefik access log from VictoriaLogs, because Traefik does not write it to stdout. CrowdSec also reads the Docker logs of all containers with the label `crowdsec.enable=true` (Authelia). The label `crowdsec.labels.type` selects the parser.
   * A banned IP address gets a ban page (403) on all sites. The page shows the IP address and a code that starts with `crowdsec-`. Thus you can see the difference from the global blocklist page in complaints. The source of the page is `core/portal/www/blocked_by_crowdsec.html`. `setup.sh` adds `PORTAL_CONTACT_EMAIL` to it and writes the result to `core/crowdsec/ban.html`. After you change the page or `PORTAL_CONTACT_EMAIL`, run `./setup.sh` again.
   * If CrowdSec stops, Traefik lets all requests through.
   * Traefik downloads the plugin when it starts. If the download fails, the https sites do not work.
   * Private IP addresses are never banned.
   * To see the bans, run `docker compose exec crowdsec cscli decisions list`. To remove a ban, run `docker compose exec crowdsec cscli decisions delete --ip <ip address>`.
   * To connect CrowdSec to the CrowdSec console, set `CROWDSEC_ENROLL_KEY` in `core/.env`.
+* **CrowdSec web UI** ([crowdsec-web-ui](https://github.com/TheDuffman85/crowdsec-web-ui)): It shows the CrowdSec alerts, decisions (bans) and metrics. You can also add and remove bans. It is at `ADMIN_PREFIX/crowdsec/`. Its own login is off, because the `auth` middleware protects it. `setup.sh` registers it as the machine `crowdsec-web-ui` in CrowdSec.
 * **Watchtower**: It updates the images each night at 04:00.
 * **VictoriaLogs**: It stores the Traefik log and the Traefik access log. Traefik sends the logs with OTLP. The default retention period is 30 days. To change it, set `LOGS_RETENTION` in `core/.env`.
 * **Portal**: An nginx server. It has these functions:
@@ -68,7 +69,7 @@ The setup script does these steps:
 
 * It copies `certs.yml.example` to `certs.yml` if `certs.yml` does not exist. Traefik needs this file, also if you do not use custom certificates.
 * It creates the Authelia secrets in `authelia/secrets/`.
-* It creates the CrowdSec bouncer key in `crowdsec/secrets/`.
+* It creates the CrowdSec bouncer key and the password of the CrowdSec web UI in `crowdsec/secrets/`.
 * It writes the user `admin` to `authelia/users_database.yml`. It overwrites the file each time.
 * It starts the stack with `docker compose up -d`.
 * It resets the password of the Portainer internal admin to a random password with the `portainer/helper-reset-password` image. This stops Portainer for a few seconds. The script uses the password one time to configure Portainer, and does not store it.
@@ -94,8 +95,9 @@ All admin interfaces are under `ADMIN_PREFIX` on your `DOMAIN`. The default `ADM
 * Portainer: <https://docker1.example.com/server-manager/portainer/>
 * Traefik dashboard: <https://docker1.example.com/server-manager/traefik/dashboard/>
 * Logs (VictoriaLogs): <https://docker1.example.com/server-manager/victoria-logs/select/vmui/>
+* CrowdSec web UI: <https://docker1.example.com/server-manager/crowdsec/>
 
-The generic `auth` middleware protects the overview, Portainer, the Traefik dashboard and the logs. Other templates can also use this middleware to protect web interfaces. The `auth` middleware sends you to the Authelia login page at `https://DOMAIN/authelia/`. The user is `admin`. `setup.sh` sets the password. After the login, Authelia keeps the session in a cookie. The session stays for 1 day without activity, and for a maximum of 7 days. Select "Remember me" to keep it for 1 month. Authelia keeps the sessions in memory. After a restart of Authelia (for example after an image update by Watchtower), you must log in again. To log out, click "Log out" on the overview page.
+The generic `auth` middleware protects the overview, Portainer, the Traefik dashboard, the logs and the CrowdSec web UI. Other templates can also use this middleware to protect web interfaces. The `auth` middleware sends you to the Authelia login page at `https://DOMAIN/authelia/`. The user is `admin`. `setup.sh` sets the password. After the login, Authelia keeps the session in a cookie. The session stays for 1 day without activity, and for a maximum of 7 days. Select "Remember me" to keep it for 1 month. Authelia keeps the sessions in memory. After a restart of Authelia (for example after an image update by Watchtower), you must log in again. To log out, click "Log out" on the overview page.
 
 Authelia is not under `ADMIN_PREFIX`, because Authelia accepts only a path with one segment of letters and digits.
 

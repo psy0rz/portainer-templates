@@ -9,6 +9,7 @@
 #   Traefik dashboard: https://host/server-manager/traefik/dashboard/
 #   Portainer:         https://host/server-manager/portainer/
 #   Logs:              https://host/server-manager/victoria-logs/select/vmui/
+#   CrowdSec:          https://host/server-manager/crowdsec/
 # Login (Authelia):    https://host/authelia/
 #
 # Run ./setup.sh the first time. Do not use "docker compose up" first: Authelia and CrowdSec need the files that setup.sh creates.
@@ -52,7 +53,7 @@ services:
       - "--metrics.prometheus.addRoutersLabels=true"
 
       # Send the traefik log and the access log to victorialogs (OTLP over http).
-      # The access log also stays on stdout.
+      # Traefik then does not write them to stdout. CrowdSec reads the access log from victorialogs.
       - "--experimental.otlpLogs=true"
       - "--log.otlp.http.endpoint=http://victorialogs:9428${ADMIN_PREFIX:-/server-manager}/victoria-logs/insert/opentelemetry/v1/logs"
       - "--accesslog.otlp.http.endpoint=http://victorialogs:9428${ADMIN_PREFIX:-/server-manager}/victoria-logs/insert/opentelemetry/v1/logs"
@@ -150,10 +151,6 @@ services:
       - "traefik.http.middlewares.crowdsec.plugin.crowdsec-bouncer.updateMaxFailure=-1"
       - "traefik.http.middlewares.crowdsec.plugin.crowdsec-bouncer.streamStartupBlock=false"
       - "traefik.http.middlewares.crowdsec.plugin.crowdsec-bouncer.banFilePath=/etc/traefik/crowdsec-ban.html"
-
-      # CrowdSec reads the traefik log and access log from stdout (see crowdsec/acquis.yaml).
-      - "crowdsec.enable=true"
-      - "crowdsec.labels.type=traefik"
 
     stop_grace_period: 0s
 
@@ -262,7 +259,8 @@ services:
 
     stop_grace_period: 0s
 
-  # CrowdSec (community edition): reads the logs of traefik and authelia, detects attacks and bans
+  # CrowdSec (community edition): reads the traefik access log (from victorialogs) and the authelia log
+  # (from docker), detects attacks and bans
   # the IP addresses. The traefik bouncer plugin blocks the banned IP addresses (status 403).
   # CrowdSec also gets the community blocklist from the CrowdSec central API.
   # Log sources: ./crowdsec/acquis.yaml. Commands: docker compose exec crowdsec cscli --help
@@ -271,6 +269,8 @@ services:
     restart: unless-stopped
     environment:
       COLLECTIONS: "crowdsecurity/traefik crowdsecurity/http-cve LePresidente/authelia"
+      # Used in crowdsec/acquis.yaml for the victorialogs url.
+      ADMIN_PREFIX: ${ADMIN_PREFIX:-/server-manager}
       # Optional: connect to the CrowdSec console (https://app.crowdsec.net).
       ENROLL_KEY: ${CROWDSEC_ENROLL_KEY:-}
       ENROLL_INSTANCE_NAME: ${DOMAIN}
@@ -286,6 +286,46 @@ services:
           create_host_path: false
       - crowdsec-config:/etc/crowdsec
       - crowdsec-data:/var/lib/crowdsec/data
+
+    stop_grace_period: 0s
+
+  # CrowdSec web UI (https://github.com/TheDuffman85/crowdsec-web-ui): alerts, decisions (bans) and metrics.
+  # Web UI: https://host/server-manager/crowdsec/ (protected with the generic auth middleware, own login is off)
+  # It connects to the CrowdSec local API as the machine "crowdsec-web-ui". setup.sh registers the machine.
+  crowdsec-web-ui:
+    image: ghcr.io/theduffman85/crowdsec-web-ui:latest
+    restart: unless-stopped
+    environment:
+      CONFIG_SERVER_BASE_PATH: ${ADMIN_PREFIX:-/server-manager}/crowdsec
+      # Authelia (auth middleware) protects the web UI.
+      CONFIG_AUTH_ENABLED: "false"
+      CONFIG_INSTANCE_NAME: ${DOMAIN}
+      CONFIG_INSTANCE_LAPI_URL: http://crowdsec:8080
+      CONFIG_INSTANCE_LAPI_AUTH_USERNAME: crowdsec-web-ui
+      CONFIG_INSTANCE_LAPI_AUTH_PASSWORD_FILE: /run/secrets/crowdsec_web_ui_password
+      CONFIG_INSTANCE_METRICS_URL: http://crowdsec:6060/metrics
+    volumes:
+      - crowdsec-web-ui:/app/data
+      # Password of the machine "crowdsec-web-ui" (made by setup.sh).
+      - type: bind
+        source: ./crowdsec/secrets/crowdsec_web_ui_password
+        target: /run/secrets/crowdsec_web_ui_password
+        read_only: true
+        bind:
+          create_host_path: false
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.crowdsec-web-ui.rule=Host(`${DOMAIN}`) && PathPrefix(`${ADMIN_PREFIX:-/server-manager}/crowdsec`)"
+      - "traefik.http.routers.crowdsec-web-ui.priority=100000"
+      - "traefik.http.routers.crowdsec-web-ui.entrypoints=websecure"
+      - "traefik.http.routers.crowdsec-web-ui.observability.accessLogs=false"
+      - "traefik.http.routers.crowdsec-web-ui.middlewares=auth"
+      - "traefik.http.services.crowdsec-web-ui.loadbalancer.server.port=3000"
+
+    networks:
+      - proxynet
+      - default
 
     stop_grace_period: 0s
 
@@ -378,6 +418,8 @@ volumes:
  crowdsec-config:
    driver: ${VOLUME_DRIVER-zfs}
  crowdsec-data:
+   driver: ${VOLUME_DRIVER-zfs}
+ crowdsec-web-ui:
    driver: ${VOLUME_DRIVER-zfs}
 
 

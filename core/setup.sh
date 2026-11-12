@@ -13,7 +13,7 @@
 #  2. Gets the admin password (argument or question) and writes authelia/users_database.yml (overwrites the file).
 #  3. Creates the secrets in authelia/secrets/ and crowdsec/secrets/ (only the ones that do not exist).
 #     Writes the CrowdSec ban page crowdsec/ban.html (from portal/www/blocked_by_crowdsec.html).
-#  4. Starts the stack (docker compose up -d).
+#  4. Starts the stack (docker compose up -d), and registers the CrowdSec web UI as a machine in CrowdSec.
 #  5. Resets the Portainer admin password to a random password (portainer/helper-reset-password),
 #     and uses it once to configure Portainer: login with OAuth through Authelia, and the app templates URL.
 #  6. Waits until Authelia is ready.
@@ -79,6 +79,10 @@ wait_until() {
 
 portainer_is_ready() {
     printf '' | portainer_api GET /api/system/status
+}
+
+crowdsec_lapi_is_ready() {
+    docker compose exec -T crowdsec cscli lapi status
 }
 
 authelia_is_healthy() {
@@ -169,7 +173,11 @@ chmod 600 "$SECRETS_DIR"/*
 mkdir -p "$CROWDSEC_SECRETS_DIR"
 chmod 700 "$CROWDSEC_SECRETS_DIR"
 create_random_secret_file "$CROWDSEC_SECRETS_DIR/bouncer_key_traefik"
+create_random_secret_file "$CROWDSEC_SECRETS_DIR/crowdsec_web_ui_password"
 chmod 600 "$CROWDSEC_SECRETS_DIR"/*
+# The CrowdSec web UI runs as the user "node" (not root), so it must be able to read its password file.
+# The directory (mode 700) keeps other users on the host out.
+chmod 644 "$CROWDSEC_SECRETS_DIR/crowdsec_web_ui_password"
 
 
 ### CrowdSec ban page
@@ -202,6 +210,15 @@ docker compose restart authelia
 if [ "$ban_page_changed" = true ]; then
     docker compose restart traefik
 fi
+
+# Register the CrowdSec web UI as a machine in the CrowdSec local API. --force updates the password if the
+# machine exists. -f /dev/null: do not overwrite the credentials file of the CrowdSec container.
+echo "Waiting for CrowdSec..."
+wait_until crowdsec_lapi_is_ready
+docker compose exec -T crowdsec cscli machines add crowdsec-web-ui \
+    --password "$(cat "$CROWDSEC_SECRETS_DIR/crowdsec_web_ui_password")" -f /dev/null --force > /dev/null
+# The web UI reads the password only at startup.
+docker compose restart crowdsec-web-ui
 
 
 ### 5. Configure Portainer
