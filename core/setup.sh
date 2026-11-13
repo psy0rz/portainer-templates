@@ -13,7 +13,7 @@
 #  2. Gets the admin password (argument or question) and writes authelia/users_database.yml (overwrites the file).
 #  3. Creates the secrets in authelia/secrets/ and crowdsec/secrets/ (only the ones that do not exist).
 #     Writes the CrowdSec ban page crowdsec/ban.html (from portal/www/blocked_by_crowdsec.html).
-#  4. Starts the stack (docker compose up -d), and registers the CrowdSec web UI as a machine in CrowdSec.
+#  4. Starts the stack (docker compose up -d --remove-orphans), and registers the CrowdSec web UI as a machine in CrowdSec.
 #  5. Resets the Portainer admin password to a random password (portainer/helper-reset-password),
 #     and uses it once to configure Portainer: login with OAuth through Authelia, and the app templates URL.
 #  6. Waits until Authelia is ready.
@@ -204,7 +204,7 @@ fi
 docker compose run --rm --no-deps -T authelia authelia validate-config \
     || fail "The Authelia configuration is not valid. Refer to the messages above."
 
-docker compose up -d
+docker compose up -d --remove-orphans
 # Authelia reads configuration.yml and the secrets only at startup. Authelia keeps the sessions in memory, so this logs out all users.
 docker compose restart authelia
 if [ "$ban_page_changed" = true ]; then
