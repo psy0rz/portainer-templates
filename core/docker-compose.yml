@@ -369,6 +369,17 @@ services:
       - traefik.http.middlewares.server-manager-page.replacepath.path=/server-manager.html
       - traefik.http.routers.server-manager.service=portal
 
+      # DOMAIN without its own site: redirect to the overview page.
+      # Priority 1: all other routers for DOMAIN win (their priority is the rule length or set higher).
+      # Only the https-catchall (priority -1) is lower.
+      - "traefik.http.routers.domain-to-server-manager.rule=Host(`${DOMAIN}`)"
+      - traefik.http.routers.domain-to-server-manager.priority=1
+      - traefik.http.routers.domain-to-server-manager.entrypoints=websecure
+      - traefik.http.routers.domain-to-server-manager.middlewares=domain-to-server-manager-redirect
+      - "traefik.http.middlewares.domain-to-server-manager-redirect.redirectregex.regex=.*"
+      - "traefik.http.middlewares.domain-to-server-manager-redirect.redirectregex.replacement=https://${DOMAIN}${ADMIN_PREFIX:-/server-manager}/"
+      - traefik.http.routers.domain-to-server-manager.service=portal
+
       # Block paths probed by bad bots and exploit scanners, globally for all hosts.
       # The portal shows blocked.html with status 403 Forbidden.
       # Matches at any depth (e.g. /blog/xmlrpc.php):
