@@ -2,9 +2,11 @@
 
 **Hosting, out of the box.**
 
-Hostbox turns one Docker server into a hosting platform for many websites and web applications. You create the sites in Portainer from a set of app templates. Each site runs in its own stack, preferably with ZFS volumes, so every Docker volume gets its own ZFS dataset that you can snapshot, back up and move to a different server.
+Hostbox turns one Docker server into a hosting platform for many websites and web applications. You create the sites in Portainer from a set of app templates. Each site runs in its own stack, preferably with ZFS volumes, so every Docker volume gets its own ZFS dataset that you can snapshot and back up.
 
 The core stack does the work around the sites. Traefik routes all sites through one reverse proxy and gets free SSL certificates from Let's Encrypt or ZeroSSL. CrowdSec and a global blocklist keep out bots and attackers. Authelia protects all admin interfaces with one login, VictoriaLogs keeps the logs, and Watchtower keeps the images up to date.
+
+![Hostbox components](docs/architecture.svg)
 
 ## Requirements
 
@@ -22,7 +24,7 @@ If you use a different operating system, do these steps manually:
 * Install Docker.
 * Install the Docker compose CLI.
 
-ZFS volumes are optional. You must have ZFS volumes if you use zfs-autobackup or zmigrate. To use ZFS volumes:
+ZFS volumes are optional. You must have ZFS volumes if you use zfs-autobackup. To use ZFS volumes:
 
 * Make sure that the `/var/lib/docker` mount point has ZFS support.
 * Install <https://github.com/csachs/docker-zfs-plugin.git>. This plugin gives ZFS volume support.
@@ -163,8 +165,6 @@ These templates are available:
 * MikoPBX
 * Mailchannels relay
 
-## Backups and migration
+## Backups
 
 With ZFS volumes, you can make backups and snapshots with zfs-autobackup: <https://pypi.org/project/zfs-autobackup/>
-
-To move a stack and its ZFS volumes to a different server, refer to [zmigrate](zmigrate/README.md).

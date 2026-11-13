@@ -1,0 +1,193 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" width="1000" height="700" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <title>Hostbox components</title>
+  <style>
+    .background { fill: #FFFFFF; }
+    .panel { fill: #F2F7FB; stroke: #C9DBE8; stroke-width: 1.5; }
+    .component { fill: #FFFFFF; stroke: #26476B; stroke-width: 1.5; }
+    .external { fill: #FFFFFF; stroke: #26476B; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .proxy { fill: #26476B; }
+    .chip { fill: #F7B267; }
+    .title { fill: #12233A; font-weight: 700; font-size: 14px; }
+    .proxy-title { fill: #FFFFFF; font-weight: 700; font-size: 16px; }
+    .proxy-role { fill: #C9DBE8; font-size: 12px; }
+    .role { fill: #4A5D73; font-size: 11px; }
+    .chip-text { fill: #12233A; font-size: 12px; font-weight: 600; }
+    .panel-title { fill: #12233A; font-weight: 700; font-size: 16px; }
+    .label { fill: #4A5D73; font-size: 11px; }
+    .traffic { stroke: #26476B; stroke-width: 2; fill: none; }
+    .security { stroke: #E8894A; stroke-width: 2; fill: none; }
+    .traffic-head { fill: #26476B; }
+    .security-head { fill: #E8894A; }
+    @media (prefers-color-scheme: dark) {
+      .background { fill: #0D1117; }
+      .panel { fill: #161F2B; stroke: #2E4560; }
+      .component, .external { fill: #0D1117; stroke: #7CA3C9; }
+      .proxy { fill: #26476B; }
+      .title, .panel-title, .chip-text { fill: #E6EDF3; }
+      .chip-text { fill: #12233A; }
+      .role, .label { fill: #9AAFC4; }
+      .traffic { stroke: #7CA3C9; }
+      .traffic-head { fill: #7CA3C9; }
+    }
+  </style>
+  <defs>
+    <marker id="traffic-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path class="traffic-head" d="M0,0 L10,5 L0,10 Z"/>
+    </marker>
+    <marker id="security-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path class="security-head" d="M0,0 L10,5 L0,10 Z"/>
+    </marker>
+  </defs>
+
+  <rect class="background" x="0" y="0" width="1000" height="700" rx="12"/>
+
+  <!-- Outside world -->
+  <rect class="external" x="40" y="30" width="190" height="50" rx="8"/>
+  <text class="title" x="135" y="52" text-anchor="middle">Let's Encrypt / ZeroSSL</text>
+  <text class="role" x="135" y="68" text-anchor="middle">free SSL certificates</text>
+
+  <rect class="external" x="320" y="30" width="170" height="50" rx="8"/>
+  <text class="title" x="405" y="52" text-anchor="middle">Visitors</text>
+  <text class="role" x="405" y="68" text-anchor="middle">your websites</text>
+
+  <rect class="external" x="555" y="30" width="170" height="50" rx="8"/>
+  <text class="title" x="640" y="52" text-anchor="middle">Admins</text>
+  <text class="role" x="640" y="68" text-anchor="middle">/server-manager</text>
+
+  <rect class="external" x="790" y="30" width="170" height="50" rx="8"/>
+  <text class="title" x="875" y="52" text-anchor="middle">CrowdSec community</text>
+  <text class="role" x="875" y="68" text-anchor="middle">global IP blocklist</text>
+
+  <!-- Traefik -->
+  <rect class="proxy" x="40" y="120" width="920" height="110" rx="10"/>
+  <text class="proxy-title" x="60" y="148">Traefik</text>
+  <text class="proxy-role" x="128" y="148">reverse proxy in front of all sites and admin interfaces</text>
+  <g>
+    <rect class="chip" x="50" y="176" width="130" height="34" rx="17"/>
+    <text class="chip-text" x="115" y="197" text-anchor="middle">Automatic SSL</text>
+    <rect class="chip" x="190" y="176" width="130" height="34" rx="17"/>
+    <text class="chip-text" x="255" y="197" text-anchor="middle">http → https</text>
+    <rect class="chip" x="335" y="176" width="130" height="34" rx="17"/>
+    <text class="chip-text" x="400" y="197" text-anchor="middle">Path blocklist</text>
+    <rect class="chip" x="527" y="176" width="130" height="34" rx="17"/>
+    <text class="chip-text" x="592" y="197" text-anchor="middle">Access log</text>
+    <rect class="chip" x="672" y="176" width="130" height="34" rx="17"/>
+    <text class="chip-text" x="737" y="197" text-anchor="middle">auth middleware</text>
+    <rect class="chip" x="817" y="176" width="130" height="34" rx="17"/>
+    <text class="chip-text" x="882" y="197" text-anchor="middle">CrowdSec bouncer</text>
+  </g>
+
+  <!-- Arrows from the outside world into Traefik -->
+  <line class="traffic" x1="135" y1="82" x2="135" y2="118" marker-start="url(#traffic-arrow)" marker-end="url(#traffic-arrow)"/>
+  <text class="label" x="143" y="104">certificates</text>
+  <line class="traffic" x1="405" y1="80" x2="405" y2="118" marker-end="url(#traffic-arrow)"/>
+  <text class="label" x="413" y="104">https</text>
+  <line class="traffic" x1="640" y1="80" x2="640" y2="118" marker-end="url(#traffic-arrow)"/>
+  <text class="label" x="648" y="104">https</text>
+
+  <!-- Site stacks -->
+  <rect class="panel" x="40" y="280" width="430" height="254" rx="10"/>
+  <text class="panel-title" x="60" y="306">Site stacks</text>
+  <text class="label" x="60" y="324">One stack per site, from Portainer templates</text>
+  <g>
+    <rect class="component" x="60" y="338" width="190" height="30" rx="6"/>
+    <text class="title" x="155" y="358" text-anchor="middle">WordPress</text>
+    <rect class="component" x="260" y="338" width="190" height="30" rx="6"/>
+    <text class="title" x="355" y="358" text-anchor="middle">WordPress LiteSpeed</text>
+    <rect class="component" x="60" y="376" width="190" height="30" rx="6"/>
+    <text class="title" x="155" y="396" text-anchor="middle">Grav CMS</text>
+    <rect class="component" x="260" y="376" width="190" height="30" rx="6"/>
+    <text class="title" x="355" y="396" text-anchor="middle">Magento 2</text>
+    <rect class="component" x="60" y="414" width="190" height="30" rx="6"/>
+    <text class="title" x="155" y="434" text-anchor="middle">Symfony LiteSpeed</text>
+    <rect class="component" x="260" y="414" width="190" height="30" rx="6"/>
+    <text class="title" x="355" y="434" text-anchor="middle">Nextcloud</text>
+    <rect class="component" x="60" y="452" width="190" height="30" rx="6"/>
+    <text class="title" x="155" y="472" text-anchor="middle">Shared MariaDB</text>
+    <rect class="component" x="260" y="452" width="190" height="30" rx="6"/>
+    <text class="title" x="355" y="472" text-anchor="middle">phpMyAdmin</text>
+    <rect class="component" x="60" y="490" width="190" height="30" rx="6"/>
+    <text class="title" x="155" y="510" text-anchor="middle">MikoPBX</text>
+    <rect class="component" x="260" y="490" width="190" height="30" rx="6"/>
+    <text class="title" x="355" y="510" text-anchor="middle">Mailchannels relay</text>
+  </g>
+  <line class="traffic" x1="400" y1="230" x2="400" y2="278" marker-end="url(#traffic-arrow)"/>
+  <text class="label" x="408" y="258">routes</text>
+
+  <!-- Core stack -->
+  <rect class="panel" x="510" y="280" width="450" height="254" rx="10"/>
+
+  <rect class="component" x="525" y="300" width="135" height="52" rx="8"/>
+  <text class="title" x="592" y="322" text-anchor="middle">VictoriaLogs</text>
+  <text class="role" x="592" y="340" text-anchor="middle">stores Traefik logs</text>
+
+  <rect class="component" x="670" y="300" width="135" height="52" rx="8"/>
+  <text class="title" x="737" y="322" text-anchor="middle">Authelia</text>
+  <text class="role" x="737" y="340" text-anchor="middle">login for admin UIs</text>
+
+  <rect class="component" x="815" y="300" width="135" height="52" rx="8"/>
+  <text class="title" x="882" y="322" text-anchor="middle">CrowdSec</text>
+  <text class="role" x="882" y="340" text-anchor="middle">bans attacker IPs</text>
+
+  <rect class="component" x="525" y="392" width="135" height="52" rx="8"/>
+  <text class="title" x="592" y="414" text-anchor="middle">Portainer</text>
+  <text class="role" x="592" y="432" text-anchor="middle">Docker GUI, templates</text>
+
+  <rect class="component" x="670" y="392" width="135" height="52" rx="8"/>
+  <text class="title" x="737" y="414" text-anchor="middle">Portal (nginx)</text>
+  <text class="role" x="737" y="432" text-anchor="middle">overview, error pages</text>
+
+  <rect class="component" x="815" y="392" width="135" height="52" rx="8"/>
+  <text class="title" x="882" y="414" text-anchor="middle">CrowdSec web UI</text>
+  <text class="role" x="882" y="432" text-anchor="middle">alerts, bans, metrics</text>
+
+  <rect class="component" x="525" y="462" width="135" height="52" rx="8"/>
+  <text class="title" x="592" y="484" text-anchor="middle">Watchtower</text>
+  <text class="role" x="592" y="502" text-anchor="middle">image updates 04:00</text>
+
+  <text class="panel-title" x="680" y="482">Core stack</text>
+  <text class="label" x="680" y="500">Admin UIs under /server-manager,</text>
+  <text class="label" x="680" y="514">protected by Authelia</text>
+
+  <!-- Arrows from Traefik into the core stack -->
+  <line class="security" x1="592" y1="210" x2="592" y2="298" marker-end="url(#security-arrow)"/>
+  <text class="label" x="600" y="262">logs (OTLP)</text>
+  <line class="traffic" x1="737" y1="210" x2="737" y2="298" marker-end="url(#traffic-arrow)"/>
+  <text class="label" x="745" y="262">login check</text>
+  <line class="security" x1="882" y1="212" x2="882" y2="298" marker-start="url(#security-arrow)"/>
+  <text class="label" x="890" y="262">bans</text>
+
+  <!-- Log flow into CrowdSec -->
+  <path class="security" d="M592,352 V372 H862 V354" marker-end="url(#security-arrow)"/>
+  <line class="security" x1="737" y1="352" x2="737" y2="372"/>
+  <text class="label" x="760" y="386">logs</text>
+  <line class="security" x1="902" y1="392" x2="902" y2="354" marker-end="url(#security-arrow)"/>
+
+  <!-- Portainer creates the site stacks -->
+  <line class="traffic" x1="525" y1="418" x2="472" y2="418" marker-end="url(#traffic-arrow)"/>
+  <text class="label" x="498" y="410" text-anchor="middle">creates</text>
+
+  <!-- Storage and backups -->
+  <rect class="component" x="40" y="580" width="260" height="52" rx="8"/>
+  <text class="title" x="170" y="602" text-anchor="middle">ZFS volumes</text>
+  <text class="role" x="170" y="620" text-anchor="middle">one ZFS dataset per Docker volume</text>
+
+  <rect class="component" x="360" y="580" width="600" height="52" rx="8"/>
+  <text class="title" x="660" y="602" text-anchor="middle">zfs-autobackup</text>
+  <text class="role" x="660" y="620" text-anchor="middle">snapshots and backups</text>
+
+  <line class="traffic" x1="170" y1="534" x2="170" y2="578" marker-end="url(#traffic-arrow)"/>
+  <text class="label" x="178" y="560">volumes</text>
+  <line class="traffic" x1="300" y1="606" x2="358" y2="606" marker-end="url(#traffic-arrow)"/>
+
+  <!-- Community blocklist into CrowdSec (drawn last, so the panel does not hide it) -->
+  <path class="security" d="M960,55 H980 V326 H952" marker-end="url(#security-arrow)"/>
+
+  <!-- Legend -->
+  <line class="traffic" x1="40" y1="680" x2="70" y2="680"/>
+  <text class="label" x="78" y="684">requests, management, storage</text>
+  <line class="security" x1="270" y1="680" x2="300" y2="680"/>
+  <text class="label" x="308" y="684">logs and bans (security)</text>
+  <rect class="external" x="470" y="672" width="30" height="16" rx="4"/>
+  <text class="label" x="508" y="684">outside the server</text>
+</svg>
