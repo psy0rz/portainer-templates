@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="26 26 148 148" width="256" height="256">
+  <title>Hostbox</title>
+  <defs>
+    <clipPath id="left-face-clip"><polygon points="40,65 100,100 100,170 40,135"/></clipPath>
+    <clipPath id="right-face-clip"><polygon points="100,100 160,65 160,135 100,170"/></clipPath>
+    <!-- Skylines in face coordinates: u = 0..60 along the face, v = 0..70 down from the top edge. -->
+    <path id="left-skyline" d="M-2,72 V46 L6,38 L14,46 V26 H27 V42 L36,33 L45,42 V36 H62 V72 Z M20,26 V19 H21.6 V26 Z"/>
+    <path id="left-windows" d="M4.5,52 h3 v4 h-3 Z M17,30 h3 v4 h-3 Z M22,37 h3 v4 h-3 Z M17,44 h3 v4 h-3 Z M34.5,45 h3 v4 h-3 Z M55,41 h3 v4 h-3 Z M49,48 h3 v4 h-3 Z M55,55 h3 v4 h-3 Z"/>
+    <path id="right-skyline" d="M-2,72 V34 H11 V44 L20,35 L29,44 V22 H40 V46 L48,38 L56,46 V40 H62 V72 Z M34,22 V15 H35.6 V22 Z"/>
+    <path id="right-windows" d="M2,39 h3 v4 h-3 Z M7,46 h3 v4 h-3 Z M18.5,47 h3 v4 h-3 Z M31,27 h3 v4 h-3 Z M36,34 h3 v4 h-3 Z M31,41 h3 v4 h-3 Z M46.5,50 h3 v4 h-3 Z"/>
+  </defs>
+
+  <!-- left face: sunset sky, houses, lit windows -->
+  <polygon points="40,65 100,100 100,170 40,135" fill="#F7B267"/>
+  <g clip-path="url(#left-face-clip)">
+    <g transform="matrix(1,0.58333,0,1,40,65)">
+      <use href="#left-skyline" fill="#26476B"/>
+      <use href="#left-windows" fill="#FFE29A"/>
+    </g>
+  </g>
+
+  <!-- right face: darker sky, houses, lit windows -->
+  <polygon points="100,100 160,65 160,135 100,170" fill="#E8894A"/>
+  <g clip-path="url(#right-face-clip)">
+    <g transform="matrix(1,-0.58333,0,1,100,100)">
+      <use href="#right-skyline" fill="#1A3352"/>
+      <use href="#right-windows" fill="#F2C35E"/>
+    </g>
+  </g>
+
+  <!-- top face: lid -->
+  <polygon points="100,30 160,65 100,100 40,65" fill="#F2F7FB"/>
+  <polyline points="70,47.5 130,82.5" fill="none" stroke="#C9DBE8" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- edges -->
+  <g fill="none" stroke="#12233A" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+    <polygon points="100,30 160,65 160,135 100,170 40,135 40,65"/>
+    <polyline points="40,65 100,100 160,65"/>
+    <line x1="100" y1="100" x2="100" y2="170"/>
+  </g>
+</svg>
