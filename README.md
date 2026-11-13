@@ -1,5 +1,7 @@
 # ![Hostbox](./logo/hostbox-logo.svg)
 
+**Hosting, out of the box.**
+
 Hostbox turns one Docker server into a hosting platform for many websites and web applications. You create the sites in Portainer from a set of app templates. Each site runs in its own stack, preferably with ZFS volumes, so every Docker volume gets its own ZFS dataset that you can snapshot, back up and move to a different server.
 
 The core stack does the work around the sites. Traefik routes all sites through one reverse proxy and gets free SSL certificates from Let's Encrypt or ZeroSSL. CrowdSec and a global blocklist keep out bots and attackers. Authelia protects all admin interfaces with one login, VictoriaLogs keeps the logs, and Watchtower keeps the images up to date.
